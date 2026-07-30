@@ -21,21 +21,13 @@
         .theme-gamer{--bg-primary:#0a0a0f;--bg-secondary:#1a0a2e;--bg-card:rgba(255,0,200,.08);--bg-input:rgba(255,0,200,.06);--text-primary:#00ffcc;--text-secondary:rgba(0,255,200,.4);--border-color:rgba(0,255,200,.15);--gradient-start:#ff00aa;--gradient-end:#00ffcc;--radius:8px;--font-family:'Orbitron','Courier New',monospace;text-shadow:0 0 10px rgba(0,255,200,.1)}
         .font-bold{--font-weight:700}.font-bold *{font-weight:700!important}
         
-        html, body {
-            margin:0;
-            padding:0;
-            width:100%;
-            height:100%;
-            overflow:hidden;
-            background:var(--bg-primary);
-            font-family:var(--font-family);
-            font-weight:var(--font-weight);
-        }
+        /* Тёмная тема */
+        .dark-theme{--bg-primary:#000;--bg-secondary:#0d0d0d;--bg-card:rgba(255,255,255,.05);--bg-input:rgba(255,255,255,.05);--text-primary:#e8e8e8;--text-secondary:rgba(255,255,255,.25);--border-color:rgba(255,255,255,.04)}
         
+        html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:var(--bg-primary);font-family:var(--font-family);font-weight:var(--font-weight)}
         body{display:flex;justify-content:center;align-items:center;background:var(--bg-primary);background-image:radial-gradient(ellipse at 20% 50%,rgba(88,130,255,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(255,70,200,.04) 0%,transparent 60%)}
-        
         .app{width:100%;height:100%;max-width:100%;max-height:100%;background:var(--bg-secondary);backdrop-filter:blur(40px) saturate(1.4);-webkit-backdrop-filter:blur(40px) saturate(1.4);border-radius:0;border:none;box-shadow:none;display:flex;flex-direction:column;overflow:hidden;position:relative}
-        
+        .app.fullscreen{border-radius:0!important;max-width:100%!important;max-height:100%!important;width:100vw!important;height:100vh!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;z-index:9999!important}
         .auth-screen{display:flex;flex-direction:column;justify-content:center;height:100%;padding:32px 28px}
         .auth-screen .logo{text-align:center;margin-bottom:32px}
         .auth-screen .logo h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
@@ -109,6 +101,10 @@
         .chat-item .info .bottom .group-tag{background:rgba(74,124,247,.15);color:var(--gradient-start);font-size:9px;font-weight:600;padding:2px 8px;border-radius:40px;flex-shrink:0;margin-left:8px}
         .chat-item .group-avatar{background:linear-gradient(135deg,#f472b6,#4a7cf7)!important}
         .chat-item .group-avatar .avatar-emoji{font-size:16px}
+        .chat-item .delete-chat-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,70,70,.9);border:none;color:#fff;padding:6px 12px;border-radius:30px;font-size:12px;font-weight:600;cursor:pointer;display:none;z-index:5;font-family:var(--font-family)}
+        .chat-item.swiped .delete-chat-btn{display:block}
+        .chat-item.swiped .info{transform:translateX(-60px)}
+        .chat-item .info{transition:transform .3s ease}
         .empty-state{text-align:center;color:var(--text-secondary);padding:60px 20px;font-size:14px}
         .empty-state .icon{font-size:48px;display:block;margin-bottom:12px}
         .chat-window{display:none;flex-direction:column;height:100%;position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg-secondary);backdrop-filter:blur(40px);z-index:10;animation:slideIn .3s ease}
@@ -138,8 +134,10 @@
         .chat-window .win-messages .msg:hover .msg-actions{display:flex}
         .chat-window .win-messages .msg .msg-actions button{background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:50%;transition:all .2s}
         .chat-window .win-messages .msg .msg-actions button:hover{color:#ff6b6b;background:rgba(255,70,70,.1)}
+        .chat-window .win-messages .msg .msg-actions .edit-msg:hover{color:#4a7cf7!important;background:rgba(74,124,247,.1)!important}
         .chat-window .win-messages .msg .msg-author{font-size:11px;font-weight:600;color:var(--gradient-start);display:block;margin-bottom:2px}
         .chat-window .win-messages .msg.incoming .msg-author{color:#8ab4f8}
+        .chat-window .win-messages .msg .edited-label{font-size:9px;opacity:.4;margin-left:4px}
         @keyframes msgIn{from{opacity:0;transform:translateY(4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
         .chat-window .win-messages .msg.incoming{background:var(--bg-card);color:var(--text-primary);align-self:flex-start;border-bottom-left-radius:4px}
         .chat-window .win-messages .msg.incoming.bot-msg{background:linear-gradient(135deg,rgba(244,114,182,.12),rgba(167,139,250,.12));border:1px solid var(--border-color)}
@@ -152,10 +150,19 @@
         .chat-window .win-input input:focus{border-color:var(--gradient-start)}
         .chat-window .win-input input:disabled{opacity:.3;cursor:not-allowed}
         .chat-window .win-input input::placeholder{color:var(--text-secondary)}
+        .chat-window .win-input .sticker-btn{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer;padding:8px 10px;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center}
+        .chat-window .win-input .sticker-btn:hover{background:var(--bg-card);color:var(--text-primary)}
         .chat-window .win-input button{padding:10px 22px;border:none;border-radius:60px;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s;box-shadow:0 2px 16px rgba(74,124,247,.15);flex-shrink:0;font-family:var(--font-family)}
         .chat-window .win-input button:hover:not(:disabled){transform:scale(1.02)}
         .chat-window .win-input button:active:not(:disabled){transform:scale(.96)}
         .chat-window .win-input button:disabled{opacity:.3;cursor:not-allowed;transform:none}
+        
+        /* Стикер-панель */
+        .sticker-panel{display:none;padding:12px 16px;background:var(--bg-secondary);border-top:1px solid var(--border-color);flex-wrap:wrap;gap:8px;max-height:200px;overflow-y:auto}
+        .sticker-panel.show{display:flex}
+        .sticker-panel .sticker{font-size:36px;cursor:pointer;padding:6px;border-radius:12px;transition:all .2s;background:var(--bg-card);border:1px solid transparent}
+        .sticker-panel .sticker:hover{transform:scale(1.15);border-color:var(--gradient-start);background:var(--bg-input)}
+        
         .profile-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);backdrop-filter:blur(30px);z-index:20;align-items:center;justify-content:center;padding:30px;animation:fadeIn .3s ease}
         .profile-modal.open{display:flex}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -197,6 +204,16 @@
         .settings-modal .settings-box .setting-group .options .opt-btn .label{font-size:12px}
         .settings-modal .settings-box .settings-close{width:100%;padding:12px;border:none;border-radius:60px;background:var(--bg-card);color:var(--text-secondary);font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;font-family:var(--font-family);margin-top:8px}
         .settings-modal .settings-box .settings-close:hover{background:var(--bg-input);color:var(--text-primary)}
+        
+        /* Переключатель темы */
+        .theme-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-card);border-radius:60px;border:1px solid var(--border-color);cursor:pointer;transition:all .3s}
+        .theme-toggle:hover{background:var(--bg-input)}
+        .theme-toggle .toggle-track{width:44px;height:24px;background:var(--text-secondary);border-radius:40px;position:relative;transition:all .3s}
+        .theme-toggle .toggle-track .toggle-thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+        .theme-toggle .toggle-track.active{background:var(--gradient-start)}
+        .theme-toggle .toggle-track.active .toggle-thumb{left:22px}
+        .theme-toggle .toggle-label{color:var(--text-primary);font-size:14px;font-weight:600}
+        
         .avatar-upload-group{display:flex;flex-direction:column;gap:10px}
         .avatar-upload-group .avatar-preview{width:100px;height:100px;border-radius:50%;margin:0 auto;overflow:hidden;position:relative;background:var(--bg-card);border:2px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:40px}
         .avatar-upload-group .avatar-preview img,.avatar-upload-group .avatar-preview video{width:100%;height:100%;object-fit:cover}
@@ -239,20 +256,15 @@
         .create-group-modal .modal-box .btn-group .btn-cancel{background:var(--bg-card);color:var(--text-secondary)}
         .create-group-modal .modal-box .btn-group .btn-cancel:hover{background:var(--bg-input);color:var(--text-primary)}
         
-        /* Полноэкранный режим */
-        .app.fullscreen {
-            border-radius: 0 !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            z-index: 9999 !important;
-        }
+        /* Редактирование сообщения */
+        .edit-input{display:none;padding:10px 16px;background:var(--bg-secondary);border-top:1px solid var(--border-color);gap:10px;align-items:center}
+        .edit-input.show{display:flex}
+        .edit-input input{flex:1;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;font-family:var(--font-family);font-weight:var(--font-weight)}
+        .edit-input input:focus{border-color:var(--gradient-start)}
+        .edit-input .edit-cancel{background:var(--bg-card);border:none;color:var(--text-secondary);padding:8px 16px;border-radius:60px;font-size:13px;cursor:pointer;font-family:var(--font-family)}
+        .edit-input .edit-cancel:hover{background:var(--bg-input)}
+        .edit-input .edit-save{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));border:none;color:#fff;padding:8px 20px;border-radius:60px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-family)}
+        .edit-input .edit-save:hover{transform:scale(1.02)}
         
         @media (max-width:500px){.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}.create-group-modal{padding:16px}.create-group-modal .modal-box{padding:24px 18px}}
     </style>
@@ -344,8 +356,15 @@
                 <div class="sys-msg">💬 Начните общение</div>
             </div>
             <div class="win-input">
+                <button class="sticker-btn" id="stickerBtn">😊</button>
                 <input type="text" id="winInput" placeholder="Сообщение..." />
                 <button id="winSendBtn">Отправить</button>
+            </div>
+            <div class="sticker-panel" id="stickerPanel"></div>
+            <div class="edit-input" id="editInput">
+                <input type="text" id="editMsgInput" placeholder="Редактировать сообщение..." />
+                <button class="edit-cancel" id="editCancel">Отмена</button>
+                <button class="edit-save" id="editSave">Сохранить</button>
             </div>
         </div>
 
@@ -392,6 +411,16 @@
         <div class="settings-modal" id="settingsModal">
             <div class="settings-box">
                 <div class="settings-title">⚙️ Настройки</div>
+
+                <div class="setting-group">
+                    <span class="group-label">🌙 Тёмная тема</span>
+                    <div class="theme-toggle" id="themeToggle">
+                        <span class="toggle-label">Включить тёмную тему</span>
+                        <div class="toggle-track" id="toggleTrack">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="setting-group">
                     <span class="group-label">🖼 Аватарка</span>
@@ -495,6 +524,9 @@
         const BOT_AVATAR = '🤖';
         const WELCOME_MSG = 'Добро пожаловать в QwerSAChat! Этому Боту писать нельзя';
         const SETTINGS_KEY = 'qwersachat_settings';
+        const THEME_KEY = 'qwersachat_theme';
+        
+        const STICKERS = ['😊','😂','🥰','😍','🤣','😎','🤗','😱','🤔','🙄','😤','🤬','🥳','🎉','🔥','💀','👀','💪','🤝','❤️','💔','✨','⭐','🌈','🎯'];
 
         // ===== LOCALSTORAGE ДЛЯ НАСТРОЕК =====
         function loadSettings() {
@@ -518,6 +550,40 @@
             else if (settings.theme === 'android') app.classList.add('theme-android');
             else if (settings.theme === 'gamer') app.classList.add('theme-gamer');
             if (settings.font === 'bold') app.classList.add('font-bold');
+        }
+
+        // ===== ТЁМНАЯ ТЕМА =====
+        let isDarkTheme = false;
+
+        function loadTheme() {
+            try {
+                const saved = localStorage.getItem(THEME_KEY);
+                if (saved) isDarkTheme = JSON.parse(saved);
+            } catch (e) {}
+            applyTheme();
+        }
+
+        function saveTheme() {
+            try {
+                localStorage.setItem(THEME_KEY, JSON.stringify(isDarkTheme));
+            } catch (e) {}
+        }
+
+        function applyTheme() {
+            const app = document.getElementById('app');
+            if (isDarkTheme) {
+                app.classList.add('dark-theme');
+                document.getElementById('toggleTrack').classList.add('active');
+            } else {
+                app.classList.remove('dark-theme');
+                document.getElementById('toggleTrack').classList.remove('active');
+            }
+        }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            saveTheme();
+            applyTheme();
         }
 
         // ===== ФУНКЦИИ ДЛЯ АВАТАРОК =====
@@ -548,6 +614,7 @@
         let onlineUsers = {};
         let statusInterval = null;
         let isFullscreen = false;
+        let editingMsgId = null;
 
         // ===== DOM =====
         const authScreen = document.getElementById('authScreen');
@@ -590,6 +657,12 @@
         const winMessages = document.getElementById('winMessages');
         const winInput = document.getElementById('winInput');
         const winSendBtn = document.getElementById('winSendBtn');
+        const stickerBtn = document.getElementById('stickerBtn');
+        const stickerPanel = document.getElementById('stickerPanel');
+        const editInput = document.getElementById('editInput');
+        const editMsgInput = document.getElementById('editMsgInput');
+        const editCancel = document.getElementById('editCancel');
+        const editSave = document.getElementById('editSave');
 
         const profileModal = document.getElementById('profileModal');
         const mAvatar = document.getElementById('mAvatar');
@@ -609,6 +682,7 @@
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsAvatarEmoji = document.getElementById('settingsAvatarEmoji');
         const avatarPreview = document.getElementById('avatarPreview');
+        const themeToggle = document.getElementById('themeToggle');
 
         const createGroupModal = document.getElementById('createGroupModal');
         const createGroupBtn = document.getElementById('createGroupBtn');
@@ -623,25 +697,40 @@
 
         const settings = loadSettings();
         applySettings(settings);
+        loadTheme();
+
+        // ===== СТИКЕРЫ =====
+        function renderStickers() {
+            let html = '';
+            STICKERS.forEach(s => {
+                html += `<span class="sticker" data-sticker="${s}">${s}</span>`;
+            });
+            stickerPanel.innerHTML = html;
+            
+            document.querySelectorAll('.sticker').forEach(el => {
+                el.addEventListener('click', function() {
+                    const sticker = this.dataset.sticker;
+                    winInput.value += sticker;
+                    stickerPanel.classList.remove('show');
+                    winInput.focus();
+                });
+            });
+        }
+        renderStickers();
 
         // ===== FULLSCREEN =====
         function toggleFullscreen() {
             const app = document.getElementById('app');
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                // Вход в полноэкранный режим
                 if (app.requestFullscreen) {
                     app.requestFullscreen();
                 } else if (app.webkitRequestFullscreen) {
                     app.webkitRequestFullscreen();
                 } else {
-                    // fallback
                     app.classList.add('fullscreen');
                     isFullscreen = true;
-                    fullscreenBtn.textContent = '⛶';
                 }
-                fullscreenBtn.textContent = '⛶';
             } else {
-                // Выход из полноэкранного режима
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitExitFullscreen) {
@@ -649,9 +738,7 @@
                 } else {
                     app.classList.remove('fullscreen');
                     isFullscreen = false;
-                    fullscreenBtn.textContent = '⛶';
                 }
-                fullscreenBtn.textContent = '⛶';
             }
         }
 
@@ -756,6 +843,13 @@
                 const docRef = await db.collection('messages').add(msg);
                 return docRef.id;
             } catch (e) { console.error('Ошибка сохранения сообщения:', e); }
+        }
+
+        async function updateMessageInFirebase(msgId, data) {
+            if (!isFirebaseReady) return;
+            try {
+                await db.collection('messages').doc(msgId).update(data);
+            } catch (e) { console.error('Ошибка обновления сообщения:', e); }
         }
 
         async function deleteMessageFromFirebase(msgId) {
@@ -1107,6 +1201,64 @@
             };
         }
 
+        // ===== УДАЛЕНИЕ ЧАТА =====
+        function deleteChat(userId) {
+            if (!confirm('Удалить этот чат?')) return;
+            
+            const messagesToDelete = allMessages.filter(m => 
+                (m.fromId === currentUser.id && m.toId === userId) || 
+                (m.fromId === userId && m.toId === currentUser.id) ||
+                (m.chatId === userId)
+            );
+            
+            messagesToDelete.forEach(m => {
+                if (m.id) {
+                    deleteMessageFromFirebase(m.id);
+                }
+            });
+            
+            allMessages = allMessages.filter(m => 
+                !((m.fromId === currentUser.id && m.toId === userId) || 
+                  (m.fromId === userId && m.toId === currentUser.id) ||
+                  (m.chatId === userId))
+            );
+            
+            if (currentChatPartner && currentChatPartner.id === userId) {
+                closeChat();
+            }
+            renderChatList(searchInput.value);
+        }
+
+        // ===== РЕДАКТИРОВАНИЕ СООБЩЕНИЯ =====
+        function startEditMessage(msgId, text) {
+            editingMsgId = msgId;
+            editMsgInput.value = text;
+            editInput.classList.add('show');
+            editMsgInput.focus();
+        }
+
+        function cancelEdit() {
+            editingMsgId = null;
+            editInput.classList.remove('show');
+            editMsgInput.value = '';
+        }
+
+        async function saveEdit() {
+            if (!editingMsgId) return;
+            const newText = editMsgInput.value.trim();
+            if (!newText) { cancelEdit(); return; }
+            
+            const msg = allMessages.find(m => m.id === editingMsgId);
+            if (msg && msg.fromId === currentUser.id) {
+                msg.text = newText;
+                msg.edited = true;
+                await updateMessageInFirebase(editingMsgId, { text: newText, edited: true });
+                renderMessages();
+                renderChatList(searchInput.value);
+            }
+            cancelEdit();
+        }
+
         // ===== АВТОРИЗАЦИЯ =====
         async function login() {
             const email = loginEmail.value.trim();
@@ -1252,16 +1404,49 @@
                                 ${isGroup ? `<span class="group-tag">Группа</span>` : ''}
                             </div>
                         </div>
+                        <button class="delete-chat-btn" data-id="${user.id}">🗑 Удалить</button>
                     </div>
                 `;
             });
 
             chatList.innerHTML = html;
 
+            // Удаление чата
+            document.querySelectorAll('.delete-chat-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    deleteChat(id);
+                });
+            });
+
+            // Свайп для удаления (мобильные)
+            let startX = 0;
+            document.querySelectorAll('.chat-item').forEach(el => {
+                el.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                });
+                el.addEventListener('touchmove', function(e) {
+                    const deltaX = startX - e.touches[0].clientX;
+                    if (deltaX > 50) {
+                        this.classList.add('swiped');
+                    } else {
+                        this.classList.remove('swiped');
+                    }
+                });
+                el.addEventListener('touchend', function() {
+                    // Убираем свайп через секунду
+                    setTimeout(() => {
+                        this.classList.remove('swiped');
+                    }, 2000);
+                });
+            });
+
             document.querySelectorAll('.chat-item').forEach(el => {
                 const id = parseInt(el.dataset.id);
                 const type = el.dataset.type;
-                el.addEventListener('click', () => {
+                el.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('delete-chat-btn')) return;
                     if (type === 'group') {
                         const group = allGroups.find(g => g.id === id);
                         if (group) openGroupChat(group);
@@ -1351,6 +1536,8 @@
             currentChatPartner = null;
             isBotChat = false;
             isGroupChat = false;
+            stickerPanel.classList.remove('show');
+            cancelEdit();
             renderChatList(searchInput.value);
         }
 
@@ -1380,6 +1567,7 @@
                 const botCls = isBot ? 'bot-msg' : '';
                 const msgId = msg.id || 'temp';
                 const isDeleted = msg.deleted === true;
+                const isEdited = msg.edited === true;
                 
                 const showAuthor = isGroupChat && !isBot && msg.fromId !== currentUser.id;
                 const authorName = showAuthor ? getUserNameById(msg.fromId) : '';
@@ -1399,8 +1587,10 @@
                         ${isBot ? '<span class="bot-label">🤖 Бот</span>' : ''}
                         ${showAuthor ? `<span class="msg-author">${authorName}</span>` : ''}
                         ${msg.text}
+                        ${isEdited ? `<span class="edited-label">(ред.)</span>` : ''}
                         <span class="m-time">${msg.time}</span>
                         <div class="msg-actions">
+                            ${out ? `<button class="edit-msg" title="Редактировать">✏️</button>` : ''}
                             ${out ? `<button class="delete-msg" title="Удалить">🗑️</button>` : ''}
                         </div>
                     </div>
@@ -1410,6 +1600,7 @@
             winMessages.innerHTML = html;
             winMessages.scrollTop = winMessages.scrollHeight;
             
+            // Удаление сообщения
             document.querySelectorAll('.delete-msg').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1426,26 +1617,36 @@
                 });
             });
             
-            let longPressTimer = null;
+            // Редактирование сообщения
+            document.querySelectorAll('.edit-msg').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const msgEl = this.closest('.msg');
+                    const msgId = msgEl.dataset.msgid;
+                    const msg = allMessages.find(m => m.id === msgId);
+                    if (msg && msg.fromId === currentUser.id) {
+                        startEditMessage(msgId, msg.text);
+                    }
+                });
+            });
+            
+            // Долгий тап для редактирования (мобильные)
+            let longPressTimerMsg = null;
             document.querySelectorAll('.msg.outgoing').forEach(el => {
                 el.addEventListener('touchstart', function(e) {
-                    longPressTimer = setTimeout(() => {
+                    longPressTimerMsg = setTimeout(() => {
                         const msgId = this.dataset.msgid;
-                        if (msgId && confirm('Удалить сообщение?')) {
-                            deleteMessageFromFirebase(msgId);
-                            const msg = allMessages.find(m => m.id === msgId);
-                            if (msg) {
-                                msg.deleted = true;
-                                renderMessages();
-                            }
+                        const msg = allMessages.find(m => m.id === msgId);
+                        if (msg && msg.fromId === currentUser.id) {
+                            startEditMessage(msgId, msg.text);
                         }
                     }, 800);
                 });
                 el.addEventListener('touchend', function() {
-                    clearTimeout(longPressTimer);
+                    clearTimeout(longPressTimerMsg);
                 });
                 el.addEventListener('touchmove', function() {
-                    clearTimeout(longPressTimer);
+                    clearTimeout(longPressTimerMsg);
                 });
             });
         }
@@ -1548,6 +1749,8 @@
             closeProfile();
             closeSettings();
             createGroupModal.classList.remove('open');
+            stickerPanel.classList.remove('show');
+            cancelEdit();
             loginForm.classList.add('active');
             registerForm.classList.remove('active');
             loginStatus.textContent = '';
@@ -1685,6 +1888,8 @@
 
         fullscreenBtn.addEventListener('click', toggleFullscreen);
 
+        themeToggle.addEventListener('click', toggleTheme);
+
         settingsBtn.addEventListener('click', openSettings);
         settingsCloseBtn.addEventListener('click', closeSettings);
         settingsModal.addEventListener('click', (e) => {
@@ -1703,6 +1908,23 @@
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage(winInput.value);
+            }
+        });
+
+        stickerBtn.addEventListener('click', () => {
+            stickerPanel.classList.toggle('show');
+        });
+
+        // Редактирование
+        editCancel.addEventListener('click', cancelEdit);
+        editSave.addEventListener('click', saveEdit);
+        editMsgInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEdit();
+            }
+            if (e.key === 'Escape') {
+                cancelEdit();
             }
         });
 
@@ -1754,7 +1976,7 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat с полноэкранным режимом!');
+        console.log('🚀 QwerSAChat со стикерами, тёмной темой, удалением чатов и редактированием!');
         
         const firebaseInit = initFirebase();
 
