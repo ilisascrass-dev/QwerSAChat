@@ -20,8 +20,22 @@
         .theme-android{--bg-primary:#121212;--bg-secondary:#1e1e1e;--bg-card:#2a2a2a;--bg-input:#2a2a2a;--text-primary:#fff;--text-secondary:rgba(255,255,255,.5);--border-color:rgba(255,255,255,.08);--gradient-start:#03dac6;--gradient-end:#018786;--radius:16px;--font-family:'Roboto','Segoe UI',system-ui,sans-serif}
         .theme-gamer{--bg-primary:#0a0a0f;--bg-secondary:#1a0a2e;--bg-card:rgba(255,0,200,.08);--bg-input:rgba(255,0,200,.06);--text-primary:#00ffcc;--text-secondary:rgba(0,255,200,.4);--border-color:rgba(0,255,200,.15);--gradient-start:#ff00aa;--gradient-end:#00ffcc;--radius:8px;--font-family:'Orbitron','Courier New',monospace;text-shadow:0 0 10px rgba(0,255,200,.1)}
         .font-bold{--font-weight:700}.font-bold *{font-weight:700!important}
-        body{min-height:100vh;background:var(--bg-primary);background-image:radial-gradient(ellipse at 20% 50%,rgba(88,130,255,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(255,70,200,.04) 0%,transparent 60%);display:flex;justify-content:center;align-items:center;padding:16px;font-family:var(--font-family);font-weight:var(--font-weight)}
-        .app{max-width:480px;width:100%;height:780px;background:var(--bg-secondary);backdrop-filter:blur(40px) saturate(1.4);-webkit-backdrop-filter:blur(40px) saturate(1.4);border-radius:var(--radius);border:1px solid var(--border-color);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.04);display:flex;flex-direction:column;overflow:hidden;position:relative}
+        
+        html, body {
+            margin:0;
+            padding:0;
+            width:100%;
+            height:100%;
+            overflow:hidden;
+            background:var(--bg-primary);
+            font-family:var(--font-family);
+            font-weight:var(--font-weight);
+        }
+        
+        body{display:flex;justify-content:center;align-items:center;background:var(--bg-primary);background-image:radial-gradient(ellipse at 20% 50%,rgba(88,130,255,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(255,70,200,.04) 0%,transparent 60%)}
+        
+        .app{width:100%;height:100%;max-width:100%;max-height:100%;background:var(--bg-secondary);backdrop-filter:blur(40px) saturate(1.4);-webkit-backdrop-filter:blur(40px) saturate(1.4);border-radius:0;border:none;box-shadow:none;display:flex;flex-direction:column;overflow:hidden;position:relative}
+        
         .auth-screen{display:flex;flex-direction:column;justify-content:center;height:100%;padding:32px 28px}
         .auth-screen .logo{text-align:center;margin-bottom:32px}
         .auth-screen .logo h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
@@ -60,6 +74,8 @@
         .chat-header .right .logout-btn:hover{background:rgba(255,70,70,.2)}
         .chat-header .right .settings-btn{background:var(--bg-card);color:var(--text-secondary)}
         .chat-header .right .settings-btn:hover{background:var(--bg-input);color:var(--text-primary)}
+        .chat-header .right .fullscreen-btn{background:var(--bg-card);color:var(--text-secondary);font-size:16px;padding:6px 10px}
+        .chat-header .right .fullscreen-btn:hover{background:var(--bg-input);color:var(--text-primary)}
         .search-bar{padding:10px 16px 14px;flex-shrink:0;background:var(--bg-secondary)}
         .search-bar input{width:100%;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;font-family:var(--font-family);font-weight:var(--font-weight)}
         .search-bar input:focus{border-color:var(--gradient-start)}
@@ -222,7 +238,23 @@
         .create-group-modal .modal-box .btn-group .btn-create:hover{transform:scale(1.02)}
         .create-group-modal .modal-box .btn-group .btn-cancel{background:var(--bg-card);color:var(--text-secondary)}
         .create-group-modal .modal-box .btn-group .btn-cancel:hover{background:var(--bg-input);color:var(--text-primary)}
-        @media (max-width:500px){body{padding:0}.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}.create-group-modal{padding:16px}.create-group-modal .modal-box{padding:24px 18px}}
+        
+        /* Полноэкранный режим */
+        .app.fullscreen {
+            border-radius: 0 !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 9999 !important;
+        }
+        
+        @media (max-width:500px){.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}.create-group-modal{padding:16px}.create-group-modal .modal-box{padding:24px 18px}}
     </style>
 </head>
 <body>
@@ -275,6 +307,7 @@
                 </div>
             </div>
             <div class="right">
+                <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
                 <button class="settings-btn" id="settingsBtn">⚙️</button>
                 <button id="profileBtn">👤</button>
                 <button class="logout-btn" id="logoutBtn">Выйти</button>
@@ -514,6 +547,7 @@
         let searchTimeout = null;
         let onlineUsers = {};
         let statusInterval = null;
+        let isFullscreen = false;
 
         // ===== DOM =====
         const authScreen = document.getElementById('authScreen');
@@ -585,9 +619,52 @@
 
         const profileBtn = document.getElementById('profileBtn');
         const logoutBtn = document.getElementById('logoutBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
 
         const settings = loadSettings();
         applySettings(settings);
+
+        // ===== FULLSCREEN =====
+        function toggleFullscreen() {
+            const app = document.getElementById('app');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Вход в полноэкранный режим
+                if (app.requestFullscreen) {
+                    app.requestFullscreen();
+                } else if (app.webkitRequestFullscreen) {
+                    app.webkitRequestFullscreen();
+                } else {
+                    // fallback
+                    app.classList.add('fullscreen');
+                    isFullscreen = true;
+                    fullscreenBtn.textContent = '⛶';
+                }
+                fullscreenBtn.textContent = '⛶';
+            } else {
+                // Выход из полноэкранного режима
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else {
+                    app.classList.remove('fullscreen');
+                    isFullscreen = false;
+                    fullscreenBtn.textContent = '⛶';
+                }
+                fullscreenBtn.textContent = '⛶';
+            }
+        }
+
+        document.addEventListener('fullscreenchange', function() {
+            const app = document.getElementById('app');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                app.classList.remove('fullscreen');
+                isFullscreen = false;
+            } else {
+                app.classList.add('fullscreen');
+                isFullscreen = true;
+            }
+        });
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ =====
         function showStatus(el, msg, isError = false) {
@@ -1304,7 +1381,6 @@
                 const msgId = msg.id || 'temp';
                 const isDeleted = msg.deleted === true;
                 
-                // Показываем автора только в групповых чатах
                 const showAuthor = isGroupChat && !isBot && msg.fromId !== currentUser.id;
                 const authorName = showAuthor ? getUserNameById(msg.fromId) : '';
                 
@@ -1607,6 +1683,8 @@
         logoutBtn.addEventListener('click', logout);
         profileBtn.addEventListener('click', () => openProfile(currentUser));
 
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
         settingsBtn.addEventListener('click', openSettings);
         settingsCloseBtn.addEventListener('click', closeSettings);
         settingsModal.addEventListener('click', (e) => {
@@ -1676,7 +1754,7 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat с именами авторов в группах!');
+        console.log('🚀 QwerSAChat с полноэкранным режимом!');
         
         const firebaseInit = initFirebase();
 
@@ -1724,4 +1802,4 @@
 </script>
 
 </body>
-                    </html>
+    </html>
