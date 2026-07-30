@@ -44,6 +44,9 @@
         .chat-header{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);flex-shrink:0;background:var(--bg-secondary)}
         .chat-header .left{display:flex;align-items:center;gap:12px}
         .chat-header .left .avatar-sm{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;cursor:pointer;transition:all .3s;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .chat-header .left .avatar-sm .online-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-secondary)}
+        .chat-header .left .avatar-sm .online-dot.online{background:#4caf50}
+        .chat-header .left .avatar-sm .online-dot.offline{background:#555}
         .chat-header .left .avatar-sm img,.chat-header .left .avatar-sm video{width:100%;height:100%;object-fit:cover}
         .chat-header .left .avatar-sm .avatar-emoji{font-size:18px}
         .chat-header .left .avatar-sm:hover{transform:scale(1.05)}
@@ -62,14 +65,20 @@
         .search-bar input{width:100%;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;font-family:var(--font-family);font-weight:var(--font-weight)}
         .search-bar input:focus{border-color:var(--gradient-start)}
         .search-bar input::placeholder{color:var(--text-secondary)}
+        .search-actions{display:flex;gap:8px;padding:0 16px 8px}
+        .search-actions .create-group-btn{padding:8px 16px;border:1px solid var(--border-color);border-radius:40px;background:transparent;color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .3s;font-family:var(--font-family)}
+        .search-actions .create-group-btn:hover{background:var(--bg-card);color:var(--text-primary);border-color:var(--gradient-start)}
         .chat-list{flex:1;overflow-y:auto;padding:4px 12px 12px}
         .chat-list::-webkit-scrollbar{width:3px}
         .chat-list::-webkit-scrollbar-track{background:transparent}
         .chat-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
-        .chat-item{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:2px}
+        .chat-item{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:2px;position:relative}
         .chat-item:hover{background:var(--bg-card)}
         .chat-item.active{background:var(--bg-card)}
         .chat-item .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .chat-item .avatar .online-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-secondary)}
+        .chat-item .avatar .online-dot.online{background:#4caf50}
+        .chat-item .avatar .online-dot.offline{background:#555}
         .chat-item .avatar img,.chat-item .avatar video{width:100%;height:100%;object-fit:cover}
         .chat-item .avatar .avatar-emoji{font-size:20px}
         .chat-item .avatar.bot{background:linear-gradient(135deg,#f472b6,#a78bfa)}
@@ -82,6 +91,9 @@
         .chat-item .info .bottom .last-msg{color:var(--text-secondary);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .chat-item .info .bottom .unread{background:var(--gradient-start);color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:40px;flex-shrink:0;margin-left:8px}
         .chat-item .info .bottom .bot-tag{background:var(--bg-card);color:var(--text-secondary);font-size:9px;font-weight:600;padding:2px 8px;border-radius:40px;flex-shrink:0;margin-left:8px;border:1px solid var(--border-color)}
+        .chat-item .info .bottom .group-tag{background:rgba(74,124,247,.15);color:var(--gradient-start);font-size:9px;font-weight:600;padding:2px 8px;border-radius:40px;flex-shrink:0;margin-left:8px}
+        .chat-item .group-avatar{background:linear-gradient(135deg,#f472b6,#4a7cf7)!important}
+        .chat-item .group-avatar .avatar-emoji{font-size:16px}
         .empty-state{text-align:center;color:var(--text-secondary);padding:60px 20px;font-size:14px}
         .empty-state .icon{font-size:48px;display:block;margin-bottom:12px}
         .chat-window{display:none;flex-direction:column;height:100%;position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg-secondary);backdrop-filter:blur(40px);z-index:10;animation:slideIn .3s ease}
@@ -91,6 +103,9 @@
         .chat-window .win-header .back{background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;padding:0 4px;transition:.3s}
         .chat-window .win-header .back:hover{color:var(--text-primary)}
         .chat-window .win-header .w-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;position:relative;cursor:pointer;transition:all .3s;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .chat-window .win-header .w-avatar .online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-secondary)}
+        .chat-window .win-header .w-avatar .online-dot.online{background:#4caf50}
+        .chat-window .win-header .w-avatar .online-dot.offline{background:#555}
         .chat-window .win-header .w-avatar img,.chat-window .win-header .w-avatar video{width:100%;height:100%;object-fit:cover}
         .chat-window .win-header .w-avatar .avatar-emoji{font-size:16px}
         .chat-window .win-header .w-avatar:hover{transform:scale(1.08)}
@@ -103,7 +118,11 @@
         .chat-window .win-messages::-webkit-scrollbar{width:3px}
         .chat-window .win-messages::-webkit-scrollbar-track{background:transparent}
         .chat-window .win-messages::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
-        .chat-window .win-messages .msg{max-width:78%;padding:8px 14px;border-radius:16px;font-size:14px;line-height:1.4;word-wrap:break-word;animation:msgIn .2s ease;font-weight:var(--font-weight)}
+        .chat-window .win-messages .msg{max-width:78%;padding:8px 14px;border-radius:16px;font-size:14px;line-height:1.4;word-wrap:break-word;animation:msgIn .2s ease;font-weight:var(--font-weight);position:relative;cursor:default}
+        .chat-window .win-messages .msg .msg-actions{display:none;position:absolute;top:-8px;right:-8px;gap:4px;background:var(--bg-secondary);border-radius:20px;padding:2px 6px;border:1px solid var(--border-color)}
+        .chat-window .win-messages .msg:hover .msg-actions{display:flex}
+        .chat-window .win-messages .msg .msg-actions button{background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:50%;transition:all .2s}
+        .chat-window .win-messages .msg .msg-actions button:hover{color:#ff6b6b;background:rgba(255,70,70,.1)}
         @keyframes msgIn{from{opacity:0;transform:translateY(4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
         .chat-window .win-messages .msg.incoming{background:var(--bg-card);color:var(--text-primary);align-self:flex-start;border-bottom-left-radius:4px}
         .chat-window .win-messages .msg.incoming.bot-msg{background:linear-gradient(135deg,rgba(244,114,182,.12),rgba(167,139,250,.12));border:1px solid var(--border-color)}
@@ -126,6 +145,9 @@
         .profile-modal .modal-box{background:var(--bg-secondary);border-radius:32px;padding:32px 28px;max-width:340px;width:100%;border:1px solid var(--border-color);backdrop-filter:blur(20px);animation:slideUp .3s ease}
         @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         .profile-modal .modal-box .m-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .profile-modal .modal-box .m-avatar .online-dot{position:absolute;bottom:2px;right:2px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg-secondary)}
+        .profile-modal .modal-box .m-avatar .online-dot.online{background:#4caf50}
+        .profile-modal .modal-box .m-avatar .online-dot.offline{background:#555}
         .profile-modal .modal-box .m-avatar img,.profile-modal .modal-box .m-avatar video{width:100%;height:100%;object-fit:cover}
         .profile-modal .modal-box .m-avatar .avatar-emoji{font-size:34px}
         .profile-modal .modal-box .m-avatar .v-lg{position:absolute;bottom:0;right:0;background:var(--gradient-start);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;border:3px solid var(--bg-secondary);color:#fff}
@@ -172,12 +194,34 @@
         .search-hint .hint-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:all .2s}
         .search-hint .hint-item:hover{background:var(--bg-input)}
         .search-hint .hint-item .hint-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .search-hint .hint-item .hint-avatar .online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-secondary)}
+        .search-hint .hint-item .hint-avatar .online-dot.online{background:#4caf50}
+        .search-hint .hint-item .hint-avatar .online-dot.offline{background:#555}
         .search-hint .hint-item .hint-avatar img,.search-hint .hint-item .hint-avatar video{width:100%;height:100%;object-fit:cover}
         .search-hint .hint-item .hint-info{flex:1}
         .search-hint .hint-item .hint-info .hint-name{color:var(--text-primary);font-size:14px;font-weight:600}
         .search-hint .hint-item .hint-info .hint-username{color:var(--text-secondary);font-size:12px}
         .search-hint .hint-item .hint-verified{color:var(--gradient-start);font-size:14px}
-        @media (max-width:500px){body{padding:0}.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}}
+        .create-group-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);backdrop-filter:blur(30px);z-index:25;align-items:center;justify-content:center;padding:30px;animation:fadeIn .3s ease}
+        .create-group-modal.open{display:flex}
+        .create-group-modal .modal-box{background:var(--bg-secondary);border-radius:32px;padding:32px 28px;max-width:380px;width:100%;border:1px solid var(--border-color);backdrop-filter:blur(20px);animation:slideUp .3s ease;max-height:80vh;overflow-y:auto}
+        .create-group-modal .modal-box .modal-title{color:var(--text-primary);font-size:20px;font-weight:700;text-align:center;margin-bottom:20px}
+        .create-group-modal .modal-box input{padding:12px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;width:100%;margin-bottom:12px;font-family:var(--font-family)}
+        .create-group-modal .modal-box input:focus{border-color:var(--gradient-start)}
+        .create-group-modal .modal-box .member-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;cursor:pointer;transition:all .2s}
+        .create-group-modal .modal-box .member-item:hover{background:var(--bg-card)}
+        .create-group-modal .modal-box .member-item .member-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
+        .create-group-modal .modal-box .member-item .member-avatar img{width:100%;height:100%;object-fit:cover}
+        .create-group-modal .modal-box .member-item .member-name{color:var(--text-primary);font-size:14px;flex:1}
+        .create-group-modal .modal-box .member-item .member-check{color:var(--gradient-start);font-size:18px}
+        .create-group-modal .modal-box .member-item .member-check.hidden{visibility:hidden}
+        .create-group-modal .modal-box .btn-group{display:flex;gap:10px;margin-top:16px}
+        .create-group-modal .modal-box .btn-group button{flex:1;padding:12px;border:none;border-radius:60px;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s;font-family:var(--font-family)}
+        .create-group-modal .modal-box .btn-group .btn-create{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff}
+        .create-group-modal .modal-box .btn-group .btn-create:hover{transform:scale(1.02)}
+        .create-group-modal .modal-box .btn-group .btn-cancel{background:var(--bg-card);color:var(--text-secondary)}
+        .create-group-modal .modal-box .btn-group .btn-cancel:hover{background:var(--bg-input);color:var(--text-primary)}
+        @media (max-width:500px){body{padding:0}.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}.create-group-modal{padding:16px}.create-group-modal .modal-box{padding:24px 18px}}
     </style>
 </head>
 <body>
@@ -218,6 +262,7 @@
             <div class="left">
                 <div class="avatar-sm" id="headerAvatar">
                     <span class="avatar-emoji" id="headerAvatarEmoji">👤</span>
+                    <span class="online-dot online" id="headerOnlineDot"></span>
                     <span class="badge" id="headerBadge" style="display:none;">✓</span>
                 </div>
                 <div class="info">
@@ -238,6 +283,9 @@
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="🔍 Поиск по имени, никнейму или ID..." />
         </div>
+        <div class="search-actions">
+            <button class="create-group-btn" id="createGroupBtn">👥 Создать группу</button>
+        </div>
 
         <div class="search-hint" id="searchHint"></div>
 
@@ -248,6 +296,7 @@
                 <button class="back" id="closeChatBtn">‹</button>
                 <div class="w-avatar" id="wAvatar">
                     <span class="avatar-emoji" id="wAvatarEmoji">👤</span>
+                    <span class="online-dot online" id="wOnlineDot"></span>
                 </div>
                 <div class="w-info" id="wInfo">
                     <div class="w-name">
@@ -266,10 +315,24 @@
             </div>
         </div>
 
+        <!-- Create Group Modal -->
+        <div class="create-group-modal" id="createGroupModal">
+            <div class="modal-box">
+                <div class="modal-title">👥 Создать группу</div>
+                <input type="text" id="groupNameInput" placeholder="Название группы" />
+                <div id="groupMembersList"></div>
+                <div class="btn-group">
+                    <button class="btn-create" id="createGroupConfirm">Создать</button>
+                    <button class="btn-cancel" id="createGroupCancel">Отмена</button>
+                </div>
+            </div>
+        </div>
+
         <div class="profile-modal" id="profileModal">
             <div class="modal-box">
                 <div class="m-avatar" id="mAvatar">
                     <span class="avatar-emoji" id="mAvatarEmoji">👤</span>
+                    <span class="online-dot online" id="mOnlineDot"></span>
                 </div>
                 <div class="m-name">
                     <span id="mName">—</span>
@@ -423,52 +486,33 @@
             if (settings.font === 'bold') app.classList.add('font-bold');
         }
 
-        // ===== ОБРЕЗКА ВИДЕО ДО 4 СЕКУНД =====
-        function trimVideoTo4Seconds(file) {
-            return new Promise((resolve, reject) => {
-                const video = document.createElement('video');
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                video.src = URL.createObjectURL(file);
-                video.muted = true;
-                video.playsInline = true;
-                video.onloadedmetadata = function() {
-                    const duration = Math.min(video.duration, 4);
-                    canvas.width = video.videoWidth || 640;
-                    canvas.height = video.videoHeight || 480;
-                    const stream = canvas.captureStream(30);
-                    const recorder = new MediaRecorder(stream, { mimeType: 'video/mp4' });
-                    const chunks = [];
-                    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-                    recorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: 'video/mp4' });
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(blob);
-                    };
-                    recorder.start();
-                    let startTime = performance.now();
-                    const drawFrame = () => {
-                        const elapsed = (performance.now() - startTime) / 1000;
-                        if (elapsed >= duration || video.ended) { recorder.stop(); return; }
-                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        requestAnimationFrame(drawFrame);
-                    };
-                    video.play().then(drawFrame).catch(reject);
-                };
-                video.onerror = reject;
-                video.load();
-            });
+        // ===== ФУНКЦИИ ДЛЯ АВАТАРОК =====
+        function renderAvatarElement(container, avatarData, emoji) {
+            if (avatarData) {
+                if (avatarData.startsWith('data:image') || avatarData.match(/\.(jpg|jpeg|png|gif)/i)) {
+                    container.innerHTML = `<img src="${avatarData}" alt="avatar" />`;
+                } else if (avatarData.startsWith('data:video') || avatarData.match(/\.(mp4|webm)/i)) {
+                    container.innerHTML = `<video src="${avatarData}" autoplay loop muted playsinline></video>`;
+                } else {
+                    container.innerHTML = `<span class="avatar-emoji">${emoji || '👤'}</span>`;
+                }
+            } else {
+                container.innerHTML = `<span class="avatar-emoji">${emoji || '👤'}</span>`;
+            }
         }
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let currentUser = null;
         let currentChatPartner = null;
         let isBotChat = false;
+        let isGroupChat = false;
         let allUsers = [];
         let allMessages = [];
+        let allGroups = [];
         let listeners = [];
         let searchTimeout = null;
+        let onlineUsers = {};
+        let statusInterval = null;
 
         // ===== DOM =====
         const authScreen = document.getElementById('authScreen');
@@ -489,6 +533,7 @@
 
         const headerAvatar = document.getElementById('headerAvatar');
         const headerAvatarEmoji = document.getElementById('headerAvatarEmoji');
+        const headerOnlineDot = document.getElementById('headerOnlineDot');
         const headerBadge = document.getElementById('headerBadge');
         const headerName = document.getElementById('headerName');
         const headerVerified = document.getElementById('headerVerified');
@@ -502,6 +547,7 @@
         const closeChatBtn = document.getElementById('closeChatBtn');
         const wAvatar = document.getElementById('wAvatar');
         const wAvatarEmoji = document.getElementById('wAvatarEmoji');
+        const wOnlineDot = document.getElementById('wOnlineDot');
         const wName = document.getElementById('wName');
         const wVerified = document.getElementById('wVerified');
         const wStatus = document.getElementById('wStatus');
@@ -513,6 +559,7 @@
         const profileModal = document.getElementById('profileModal');
         const mAvatar = document.getElementById('mAvatar');
         const mAvatarEmoji = document.getElementById('mAvatarEmoji');
+        const mOnlineDot = document.getElementById('mOnlineDot');
         const mName = document.getElementById('mName');
         const mVerified = document.getElementById('mVerified');
         const mUsername = document.getElementById('mUsername');
@@ -527,6 +574,13 @@
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsAvatarEmoji = document.getElementById('settingsAvatarEmoji');
         const avatarPreview = document.getElementById('avatarPreview');
+
+        const createGroupModal = document.getElementById('createGroupModal');
+        const createGroupBtn = document.getElementById('createGroupBtn');
+        const groupNameInput = document.getElementById('groupNameInput');
+        const groupMembersList = document.getElementById('groupMembersList');
+        const createGroupConfirm = document.getElementById('createGroupConfirm');
+        const createGroupCancel = document.getElementById('createGroupCancel');
 
         const profileBtn = document.getElementById('profileBtn');
         const logoutBtn = document.getElementById('logoutBtn');
@@ -564,18 +618,11 @@
             return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
         }
 
-        // ===== ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ АВАТАРКИ =====
-        function renderAvatarElement(container, avatarData, emoji) {
-            if (avatarData) {
-                const type = avatarData.startsWith('data:image') ? 'image' : 'video';
-                if (type === 'image') {
-                    container.innerHTML = `<img src="${avatarData}" alt="avatar" />`;
-                } else {
-                    container.innerHTML = `<video src="${avatarData}" autoplay loop muted playsinline></video>`;
-                }
-            } else {
-                container.innerHTML = `<span class="avatar-emoji">${emoji || '👤'}</span>`;
-            }
+        function isUserOnline(userId) {
+            if (userId === currentUser?.id) return true;
+            const status = onlineUsers[userId];
+            if (!status) return false;
+            return (Date.now() - status.lastSeen) < 60000;
         }
 
         // ===== FIREBASE: ЗАГРУЗКА ДАННЫХ =====
@@ -598,16 +645,48 @@
             try {
                 const snapshot = await db.collection('messages').orderBy('timestamp', 'asc').get();
                 allMessages = [];
-                snapshot.forEach(doc => { allMessages.push(doc.data()); });
+                snapshot.forEach(doc => { allMessages.push({ id: doc.id, ...doc.data() }); });
                 console.log('📨 Загружено сообщений:', allMessages.length);
                 return allMessages;
             } catch (e) { console.error('Ошибка загрузки сообщений:', e); return []; }
         }
 
+        async function loadGroupsFromFirebase() {
+            if (!isFirebaseReady) return;
+            try {
+                const snapshot = await db.collection('groups').get();
+                allGroups = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.id !== undefined) allGroups.push({ id: doc.id, ...data });
+                });
+                console.log('👥 Загружено групп:', allGroups.length);
+                return allGroups;
+            } catch (e) { console.error('Ошибка загрузки групп:', e); return []; }
+        }
+
         // ===== FIREBASE: СОХРАНЕНИЕ =====
         async function saveMessageToFirebase(msg) {
             if (!isFirebaseReady) return;
-            try { await db.collection('messages').add(msg); } catch (e) { console.error('Ошибка сохранения сообщения:', e); }
+            try { 
+                const docRef = await db.collection('messages').add(msg);
+                return docRef.id;
+            } catch (e) { console.error('Ошибка сохранения сообщения:', e); }
+        }
+
+        async function deleteMessageFromFirebase(msgId) {
+            if (!isFirebaseReady) return;
+            try {
+                await db.collection('messages').doc(msgId).delete();
+            } catch (e) { console.error('Ошибка удаления сообщения:', e); }
+        }
+
+        async function saveGroupToFirebase(group) {
+            if (!isFirebaseReady) return;
+            try {
+                const docRef = await db.collection('groups').add(group);
+                return docRef.id;
+            } catch (e) { console.error('Ошибка сохранения группы:', e); }
         }
 
         // ===== FIREBASE: РЕАЛЬНОЕ ВРЕМЯ =====
@@ -631,8 +710,9 @@
             if (!isFirebaseReady) return;
             if (listeners.messages) listeners.messages();
             listeners.messages = db.collection('messages').orderBy('timestamp', 'asc').onSnapshot((snapshot) => {
-                allMessages = [];
-                snapshot.forEach(doc => { allMessages.push(doc.data()); });
+                const newMessages = [];
+                snapshot.forEach(doc => { newMessages.push({ id: doc.id, ...doc.data() }); });
+                allMessages = newMessages;
                 if (currentUser) {
                     if (currentChatPartner) renderMessages();
                     renderChatList(searchInput.value);
@@ -640,9 +720,75 @@
             }, (error) => { console.warn('Ошибка слушателя messages:', error); });
         }
 
+        function subscribeToGroups() {
+            if (!isFirebaseReady) return;
+            if (listeners.groups) listeners.groups();
+            listeners.groups = db.collection('groups').onSnapshot((snapshot) => {
+                allGroups = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.id !== undefined) allGroups.push({ id: doc.id, ...data });
+                });
+                if (currentUser) {
+                    renderChatList(searchInput.value);
+                }
+            }, (error) => { console.warn('Ошибка слушателя groups:', error); });
+        }
+
+        // ===== ОНЛАЙН СТАТУС =====
+        function updateOnlineStatus() {
+            if (!currentUser || !isFirebaseReady) return;
+            
+            db.collection('users').where('id', '==', currentUser.id).get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        doc.ref.update({
+                            lastSeen: Date.now(),
+                            isOnline: true
+                        });
+                    });
+                })
+                .catch(err => console.warn('Ошибка обновления статуса:', err));
+                
+            onlineUsers[currentUser.id] = { lastSeen: Date.now() };
+        }
+
+        function loadOnlineStatuses() {
+            if (!isFirebaseReady) return;
+            
+            if (listeners.status) listeners.status();
+            listeners.status = db.collection('users').onSnapshot((snapshot) => {
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.id !== undefined && data.lastSeen) {
+                        onlineUsers[data.id] = { lastSeen: data.lastSeen };
+                    }
+                });
+                if (currentUser) {
+                    renderChatList(searchInput.value);
+                    updateChatHeaderStatus();
+                }
+            }, (error) => { console.warn('Ошибка слушателя статусов:', error); });
+        }
+
+        function updateChatHeaderStatus() {
+            if (!currentChatPartner) return;
+            const isOnline = isUserOnline(currentChatPartner.id);
+            const dot = document.querySelector('.w-avatar .online-dot');
+            if (dot) {
+                dot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
+            }
+            wStatus.textContent = isOnline ? 'онлайн' : 'был недавно';
+        }
+
         // ===== MESSAGES =====
         function getChatMessages(userId) {
-            return allMessages.filter(m => (m.fromId === currentUser.id && m.toId === userId) || (m.fromId === userId && m.toId === currentUser.id));
+            return allMessages.filter(m => 
+                (m.fromId === currentUser.id && m.toId === userId) || 
+                (m.fromId === userId && m.toId === currentUser.id) ||
+                (m.chatId === userId && m.fromId === currentUser.id) ||
+                (m.chatId === userId && m.toId === currentUser.id)
+            );
         }
 
         function getLastMessage(userId) {
@@ -651,16 +797,18 @@
         }
 
         function getUnreadCount(userId) {
-            return allMessages.filter(m => m.fromId === userId && m.toId === currentUser.id && !m.read).length;
+            return allMessages.filter(m => 
+                m.toId === currentUser.id && m.fromId === userId && !m.read
+            ).length;
         }
 
         function markAsRead(userId) {
             allMessages.forEach(m => {
-                if (m.fromId === userId && m.toId === currentUser.id && !m.read) {
+                if (m.toId === currentUser.id && m.fromId === userId && !m.read) {
                     m.read = true;
-                    db.collection('messages').where('fromId', '==', userId).where('toId', '==', currentUser.id).where('read', '==', false).get().then(snapshot => {
-                        snapshot.forEach(doc => { doc.ref.update({ read: true }); });
-                    });
+                    if (m.id) {
+                        db.collection('messages').doc(m.id).update({ read: true }).catch(() => {});
+                    }
                 }
             });
         }
@@ -671,10 +819,26 @@
                 if (m.fromId === currentUser.id) ids.add(m.toId);
                 if (m.toId === currentUser.id) ids.add(m.fromId);
             });
+            allGroups.forEach(g => {
+                if (g.members && g.members.includes(currentUser.id)) {
+                    ids.add(g.id);
+                }
+            });
             const result = [];
             ids.forEach(id => {
                 const user = findUserById(id);
                 if (user && user.id !== currentUser.id) result.push(user);
+                const group = allGroups.find(g => g.id === id);
+                if (group) {
+                    result.push({ 
+                        id: group.id, 
+                        displayName: group.name, 
+                        username: 'group',
+                        avatar: '👥',
+                        isGroup: true,
+                        members: group.members || []
+                    });
+                }
             });
             return result;
         }
@@ -706,7 +870,7 @@
             await saveMessageToFirebase(msg);
         }
 
-        // ===== ПОИСК ПО ЮЗЕРНЕЙМУ =====
+        // ===== ПОИСК =====
         function updateSearchHint(query) {
             const trimmed = query.trim().toLowerCase();
             if (!trimmed || trimmed.length < 1) {
@@ -739,18 +903,19 @@
             let html = `<div class="hint-title">👥 Найдено пользователей: ${results.length}</div>`;
             results.forEach(user => {
                 const verified = isVerified(user);
+                const isOnline = isUserOnline(user.id);
                 const avatarData = user.avatarData || null;
                 const emoji = user.avatar || '👤';
                 
-                // Временный контейнер для рендера аватарки
                 const tempContainer = document.createElement('div');
                 renderAvatarElement(tempContainer, avatarData, emoji);
                 const avatarHTML = tempContainer.innerHTML;
 
                 html += `
                     <div class="hint-item" data-id="${user.id}">
-                        <div class="hint-avatar">
+                        <div class="hint-avatar" style="position:relative;">
                             ${avatarHTML}
+                            <span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>
                         </div>
                         <div class="hint-info">
                             <div class="hint-name">${user.displayName}${verified ? ' <span class="hint-verified">✓</span>' : ''}</div>
@@ -774,7 +939,10 @@
 
         function openChatWithUser(user) {
             if (!user || user.id === currentUser.id) return;
-            const hasChat = allMessages.some(m => (m.fromId === currentUser.id && m.toId === user.id) || (m.fromId === user.id && m.toId === currentUser.id));
+            const hasChat = allMessages.some(m => 
+                (m.fromId === currentUser.id && m.toId === user.id) || 
+                (m.fromId === user.id && m.toId === currentUser.id)
+            );
             if (!hasChat && !user.isBot) {
                 const sysMsg = {
                     fromId: currentUser.id,
@@ -789,6 +957,71 @@
                 saveMessageToFirebase(sysMsg);
             }
             openChat(user);
+        }
+
+        // ===== ГРУППЫ =====
+        function showCreateGroupModal() {
+            createGroupModal.classList.add('open');
+            groupNameInput.value = '';
+            
+            let html = '<div style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">Выберите участников:</div>';
+            allUsers.forEach(user => {
+                if (user.id === currentUser.id) return;
+                const emoji = user.avatar || '👤';
+                html += `
+                    <div class="member-item" data-id="${user.id}">
+                        <div class="member-avatar"><span>${emoji}</span></div>
+                        <div class="member-name">${user.displayName}</div>
+                        <span class="member-check hidden">✓</span>
+                    </div>
+                `;
+            });
+            groupMembersList.innerHTML = html;
+            
+            const selectedMembers = [];
+            document.querySelectorAll('.member-item').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    const check = this.querySelector('.member-check');
+                    if (check.classList.contains('hidden')) {
+                        check.classList.remove('hidden');
+                        selectedMembers.push(id);
+                    } else {
+                        check.classList.add('hidden');
+                        const index = selectedMembers.indexOf(id);
+                        if (index > -1) selectedMembers.splice(index, 1);
+                    }
+                });
+            });
+            
+            createGroupConfirm.onclick = async function() {
+                const name = groupNameInput.value.trim();
+                if (!name) {
+                    alert('Введите название группы');
+                    return;
+                }
+                if (selectedMembers.length < 1) {
+                    alert('Выберите хотя бы одного участника');
+                    return;
+                }
+                
+                const group = {
+                    id: Date.now(),
+                    name: name,
+                    creator: currentUser.id,
+                    members: [currentUser.id, ...selectedMembers],
+                    createdAt: Date.now()
+                };
+                
+                const groupId = await saveGroupToFirebase(group);
+                if (groupId) {
+                    group.id = groupId;
+                    allGroups.push(group);
+                    alert('✅ Группа создана!');
+                    createGroupModal.classList.remove('open');
+                    renderChatList(searchInput.value);
+                }
+            };
         }
 
         // ===== АВТОРИЗАЦИЯ =====
@@ -821,7 +1054,15 @@
                 if (!usernameCheck.empty) { showStatus(regStatus, '❌ Никнейм занят', true); return; }
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const uid = userCredential.user.uid;
-                const newUser = { id: Date.now(), displayName, username, email, avatar: ['🌟','💫','⚡','🌈','🦋','🚀','🎯','🏆','🎭','🌊','🔥','✨','💎','🎪','🪐'][Math.floor(Math.random() * 15)] };
+                const newUser = { 
+                    id: Date.now(), 
+                    displayName, 
+                    username, 
+                    email, 
+                    avatar: ['🌟','💫','⚡','🌈','🦋','🚀','🎯','🏆','🎭','🌊','🔥','✨','💎','🎪','🪐'][Math.floor(Math.random() * 15)],
+                    lastSeen: Date.now(),
+                    isOnline: true
+                };
                 await db.collection('users').doc(uid).set(newUser);
                 currentUser = newUser;
                 showStatus(regStatus, '✅ Аккаунт создан!');
@@ -835,17 +1076,25 @@
             mainApp.classList.add('active');
             await loadUsersFromFirebase();
             await loadMessagesFromFirebase();
+            await loadGroupsFromFirebase();
             subscribeToUsers();
             subscribeToMessages();
+            subscribeToGroups();
+            loadOnlineStatuses();
             await sendBotWelcome();
             renderHeader();
             renderChatList();
+            
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(updateOnlineStatus, 30000);
+            updateOnlineStatus();
         }
 
         function renderHeader() {
             const emoji = currentUser.avatar || '👤';
             headerAvatarEmoji.textContent = emoji;
             renderAvatarElement(headerAvatar, currentUser.avatarData, emoji);
+            headerOnlineDot.className = 'online-dot online';
             
             const v = isVerified(currentUser);
             headerBadge.style.display = v ? 'flex' : 'none';
@@ -865,7 +1114,9 @@
                 const ub = getUnreadCount(b.id);
                 if (ua > 0 && ub === 0) return -1;
                 if (ub > 0 && ua === 0) return 1;
-                return 0;
+                const lastA = getLastMessage(a.id);
+                const lastB = getLastMessage(b.id);
+                return (lastB?.timestamp || 0) - (lastA?.timestamp || 0);
             });
 
             if (filter.trim()) {
@@ -873,7 +1124,7 @@
                 const idNum = parseInt(f);
                 chatUsers = chatUsers.filter(u => {
                     if (u.id === idNum) return true;
-                    return u.displayName.toLowerCase().includes(f) || u.username.toLowerCase().includes(f);
+                    return u.displayName.toLowerCase().includes(f) || (u.username && u.username.toLowerCase().includes(f));
                 });
             }
 
@@ -888,31 +1139,34 @@
                 const unread = getUnreadCount(user.id);
                 const isActive = currentChatPartner && currentChatPartner.id === user.id;
                 const isBot = user.id === BOT_ID;
-                const verified = !isBot && isVerified(user);
-                const avatarClass = isBot ? 'bot' : 'user';
-                const emoji = user.avatar || '👤';
+                const isGroup = user.isGroup || false;
+                const verified = !isBot && !isGroup && isVerified(user);
+                const isOnline = !isBot && !isGroup && isUserOnline(user.id);
+                const avatarClass = isBot ? 'bot' : (isGroup ? 'group-avatar' : 'user');
+                const emoji = user.avatar || (isGroup ? '👥' : '👤');
                 const avatarData = user.avatarData || null;
                 
-                // Рендерим аватарку
                 const tempContainer = document.createElement('div');
                 renderAvatarElement(tempContainer, avatarData, emoji);
                 const avatarHTML = tempContainer.innerHTML;
 
                 html += `
-                    <div class="chat-item ${isActive ? 'active' : ''}" data-id="${user.id}">
-                        <div class="avatar ${avatarClass}">
+                    <div class="chat-item ${isActive ? 'active' : ''}" data-id="${user.id}" data-type="${isGroup ? 'group' : 'user'}">
+                        <div class="avatar ${avatarClass}" style="position:relative;">
                             ${avatarHTML}
+                            ${!isBot && !isGroup ? `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>` : ''}
                             ${verified ? `<span class="v-badge">✓</span>` : ''}
                         </div>
                         <div class="info">
                             <div class="top">
-                                <div class="name">${user.displayName}${isBot ? ' 🤖' : ''}</div>
+                                <div class="name">${user.displayName}${isBot ? ' 🤖' : ''}${isGroup ? ' 👥' : ''}</div>
                                 <span class="time">${last ? last.time : ''}</span>
                             </div>
                             <div class="bottom">
                                 <span class="last-msg">${last ? last.text : (isBot ? '💬 Напишите что-нибудь' : 'Нет сообщений')}</span>
                                 ${unread > 0 ? `<span class="unread">${unread}</span>` : ''}
                                 ${isBot ? `<span class="bot-tag">Бот</span>` : ''}
+                                ${isGroup ? `<span class="group-tag">Группа</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -923,9 +1177,15 @@
 
             document.querySelectorAll('.chat-item').forEach(el => {
                 const id = parseInt(el.dataset.id);
+                const type = el.dataset.type;
                 el.addEventListener('click', () => {
-                    const user = findUserById(id);
-                    if (user) openChat(user);
+                    if (type === 'group') {
+                        const group = allGroups.find(g => g.id === id);
+                        if (group) openGroupChat(group);
+                    } else {
+                        const user = findUserById(id);
+                        if (user) openChat(user);
+                    }
                 });
                 el.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
@@ -935,29 +1195,62 @@
             });
         }
 
+        function openGroupChat(group) {
+            if (!group) return;
+            currentChatPartner = { id: group.id, displayName: group.name, avatar: '👥', isGroup: true, members: group.members };
+            isGroupChat = true;
+            isBotChat = false;
+            
+            chatWindow.classList.add('open');
+            wAvatar.className = 'w-avatar group-avatar';
+            wAvatarEmoji.textContent = '👥';
+            wAvatar.innerHTML = '<span class="avatar-emoji">👥</span>';
+            wName.textContent = group.name;
+            wVerified.style.display = 'none';
+            wStatus.textContent = `${group.members.length} участников`;
+            
+            wInfo.onclick = () => openGroupProfile(group);
+            
+            winInput.disabled = false;
+            winInput.placeholder = 'Сообщение в группу...';
+            winSendBtn.disabled = false;
+            
+            renderMessages();
+            winInput.focus();
+            renderChatList(searchInput.value);
+        }
+
+        function openGroupProfile(group) {
+            if (!group) return;
+            const members = group.members.map(id => findUserById(id)).filter(u => u);
+            alert(`👥 ${group.name}\nУчастников: ${members.length}\n${members.map(u => u.displayName).join(', ')}`);
+        }
+
         function openChat(user) {
             if (!user || user.id === currentUser.id) return;
             currentChatPartner = user;
             isBotChat = user.id === BOT_ID;
+            isGroupChat = false;
             markAsRead(user.id);
 
             chatWindow.classList.add('open');
             const isBot = isBotChat;
             const verified = !isBot && isVerified(user);
             const avatarClass = isBot ? 'bot' : 'user';
+            const emoji = user.avatar || '👤';
             
             wAvatar.className = `w-avatar ${avatarClass}`;
-            const emoji = user.avatar || '👤';
             wAvatarEmoji.textContent = emoji;
-            
-            // Рендерим аватарку собеседника в окне чата
             renderAvatarElement(wAvatar, user.avatarData, emoji);
+            
+            const isOnline = !isBot && isUserOnline(user.id);
+            wOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
             
             wAvatar.onclick = () => openProfile(user);
             
             wName.textContent = user.displayName;
             wVerified.style.display = verified ? 'inline' : 'none';
-            wStatus.textContent = isBot ? '🤖 Бот QwerSAChat' : '@' + user.username;
+            wStatus.textContent = isBot ? '🤖 Бот QwerSAChat' : (isOnline ? 'онлайн' : 'был недавно');
 
             wInfo.onclick = () => openProfile(user);
 
@@ -974,6 +1267,7 @@
             chatWindow.classList.remove('open');
             currentChatPartner = null;
             isBotChat = false;
+            isGroupChat = false;
             renderChatList(searchInput.value);
         }
 
@@ -982,45 +1276,110 @@
                 winMessages.innerHTML = `<div class="sys-msg">💬 Начните общение</div>`;
                 return;
             }
-            const msgs = getChatMessages(currentChatPartner.id);
+            
+            const targetId = currentChatPartner.id;
+            const msgs = allMessages.filter(m => 
+                (m.fromId === currentUser.id && m.toId === targetId) || 
+                (m.fromId === targetId && m.toId === currentUser.id) ||
+                (m.chatId === targetId)
+            );
+            
             if (msgs.length === 0) {
                 winMessages.innerHTML = `<div class="sys-msg">💬 Напишите что-нибудь ${currentChatPartner.displayName}</div>`;
                 return;
             }
+            
             let html = '';
             msgs.forEach(msg => {
                 const out = msg.fromId === currentUser.id;
                 const isBot = msg.fromId === BOT_ID;
                 const cls = out ? 'outgoing' : 'incoming';
                 const botCls = isBot ? 'bot-msg' : '';
+                const msgId = msg.id || 'temp';
+                const isDeleted = msg.deleted === true;
+                
+                if (isDeleted) {
+                    html += `
+                        <div class="msg ${cls} ${botCls}" style="opacity:0.4;font-style:italic;">
+                            Сообщение удалено
+                            <span class="m-time">${msg.time}</span>
+                        </div>
+                    `;
+                    return;
+                }
+                
                 html += `
-                    <div class="msg ${cls} ${botCls}">
+                    <div class="msg ${cls} ${botCls}" data-msgid="${msgId}">
                         ${isBot ? '<span class="bot-label">🤖 Бот</span>' : ''}
                         ${msg.text}
                         <span class="m-time">${msg.time}</span>
+                        <div class="msg-actions">
+                            ${out ? `<button class="delete-msg" title="Удалить">🗑️</button>` : ''}
+                        </div>
                     </div>
                 `;
             });
+            
             winMessages.innerHTML = html;
             winMessages.scrollTop = winMessages.scrollHeight;
+            
+            document.querySelectorAll('.delete-msg').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const msgEl = this.closest('.msg');
+                    const msgId = msgEl.dataset.msgid;
+                    if (msgId && confirm('Удалить сообщение?')) {
+                        deleteMessageFromFirebase(msgId);
+                        const msg = allMessages.find(m => m.id === msgId);
+                        if (msg) {
+                            msg.deleted = true;
+                            renderMessages();
+                        }
+                    }
+                });
+            });
+            
+            let longPressTimer = null;
+            document.querySelectorAll('.msg.outgoing').forEach(el => {
+                el.addEventListener('touchstart', function(e) {
+                    longPressTimer = setTimeout(() => {
+                        const msgId = this.dataset.msgid;
+                        if (msgId && confirm('Удалить сообщение?')) {
+                            deleteMessageFromFirebase(msgId);
+                            const msg = allMessages.find(m => m.id === msgId);
+                            if (msg) {
+                                msg.deleted = true;
+                                renderMessages();
+                            }
+                        }
+                    }, 800);
+                });
+                el.addEventListener('touchend', function() {
+                    clearTimeout(longPressTimer);
+                });
+                el.addEventListener('touchmove', function() {
+                    clearTimeout(longPressTimer);
+                });
+            });
         }
 
-        async function sendMessage() {
-            if (!currentChatPartner || isBotChat) {
-                if (isBotChat) winInput.value = '';
-                return;
-            }
-            const text = winInput.value.trim();
-            if (!text) return;
-
+        async function sendMessage(text) {
+            if (!currentChatPartner) return;
+            if (isBotChat) { winInput.value = ''; return; }
+            
+            const targetId = currentChatPartner.id;
             const msg = {
                 fromId: currentUser.id,
-                toId: currentChatPartner.id,
-                text,
+                toId: targetId,
+                text: text,
                 time: getTime(),
                 timestamp: Date.now(),
                 read: false
             };
+            if (isGroupChat) {
+                msg.chatId = targetId;
+                msg.toId = null;
+            }
             allMessages.push(msg);
             await saveMessageToFirebase(msg);
             winInput.value = '';
@@ -1050,13 +1409,13 @@
             const isBot = user.id === BOT_ID;
             const verified = !isBot && isVerified(user);
             const avatarClass = isBot ? 'bot' : 'user';
+            const isOnline = !isBot && isUserOnline(user.id);
 
             mAvatar.className = `m-avatar ${avatarClass}`;
             const emoji = user.avatar || '👤';
             mAvatarEmoji.textContent = emoji;
-            
-            // Рендерим аватарку в профиле
             renderAvatarElement(mAvatar, user.avatarData, emoji);
+            mOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
             
             mName.innerHTML = user.displayName;
             mVerified.style.display = 'none';
@@ -1085,16 +1444,23 @@
         async function logout() {
             if (listeners.users) listeners.users();
             if (listeners.messages) listeners.messages();
+            if (listeners.groups) listeners.groups();
+            if (listeners.status) listeners.status();
+            if (statusInterval) clearInterval(statusInterval);
             listeners = {};
+            
             currentUser = null;
             currentChatPartner = null;
             isBotChat = false;
+            isGroupChat = false;
+            
             await auth.signOut();
             authScreen.style.display = 'flex';
             mainApp.classList.remove('active');
             chatWindow.classList.remove('open');
             closeProfile();
             closeSettings();
+            createGroupModal.classList.remove('open');
             loginForm.classList.add('active');
             registerForm.classList.remove('active');
             loginStatus.textContent = '';
@@ -1163,6 +1529,44 @@
             closeSettings();
         }
 
+        // ===== ОБРЕЗКА ВИДЕО =====
+        function trimVideoTo4Seconds(file) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                video.src = URL.createObjectURL(file);
+                video.muted = true;
+                video.playsInline = true;
+                video.onloadedmetadata = function() {
+                    const duration = Math.min(video.duration, 4);
+                    canvas.width = video.videoWidth || 640;
+                    canvas.height = video.videoHeight || 480;
+                    const stream = canvas.captureStream(30);
+                    const recorder = new MediaRecorder(stream, { mimeType: 'video/mp4' });
+                    const chunks = [];
+                    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/mp4' });
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    };
+                    recorder.start();
+                    let startTime = performance.now();
+                    const drawFrame = () => {
+                        const elapsed = (performance.now() - startTime) / 1000;
+                        if (elapsed >= duration || video.ended) { recorder.stop(); return; }
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        requestAnimationFrame(drawFrame);
+                    };
+                    video.play().then(drawFrame).catch(reject);
+                };
+                video.onerror = reject;
+                video.load();
+            });
+        }
+
         // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
         function showLoginForm() {
             loginForm.classList.add('active');
@@ -1198,12 +1602,18 @@
             if (e.target === settingsModal) closeSettings();
         });
 
+        createGroupBtn.addEventListener('click', showCreateGroupModal);
+        createGroupCancel.addEventListener('click', () => createGroupModal.classList.remove('open'));
+        createGroupModal.addEventListener('click', (e) => {
+            if (e.target === createGroupModal) createGroupModal.classList.remove('open');
+        });
+
         closeChatBtn.addEventListener('click', closeChat);
-        winSendBtn.addEventListener('click', sendMessage);
+        winSendBtn.addEventListener('click', () => sendMessage(winInput.value));
         winInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendMessage();
+                sendMessage(winInput.value);
             }
         });
 
@@ -1255,7 +1665,8 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat с аватарками для всех!');
+        console.log('🚀 QwerSAChat без фото (Storage не нужен)');
+        console.log('✅ Онлайн-статус, группы, удаление сообщений работают!');
         
         const firebaseInit = initFirebase();
 
@@ -1275,6 +1686,9 @@
                             };
                             if (userData.avatarData) {
                                 currentUser.avatarData = userData.avatarData;
+                            }
+                            if (userData.lastSeen) {
+                                onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
                             }
                             await enterApp();
                             console.log('✅ Автовход для:', currentUser.displayName);
@@ -1300,4 +1714,4 @@
 </script>
 
 </body>
-                            </html>
+    </html>
