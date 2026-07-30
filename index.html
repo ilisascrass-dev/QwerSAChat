@@ -14,7 +14,6 @@
     </script>
 
     <style>
-        /* ===== СТИЛИ (СЖАТЫЕ) ===== */
         *{margin:0;padding:0;box-sizing:border-box;transition:all .3s ease}
         :root{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--shadow:0 30px 80px rgba(0,0,0,.7);--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;--font-weight:400}
         .theme-ios{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif}
@@ -123,6 +122,8 @@
         .chat-window .win-messages .msg:hover .msg-actions{display:flex}
         .chat-window .win-messages .msg .msg-actions button{background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:50%;transition:all .2s}
         .chat-window .win-messages .msg .msg-actions button:hover{color:#ff6b6b;background:rgba(255,70,70,.1)}
+        .chat-window .win-messages .msg .msg-author{font-size:11px;font-weight:600;color:var(--gradient-start);display:block;margin-bottom:2px}
+        .chat-window .win-messages .msg.incoming .msg-author{color:#8ab4f8}
         @keyframes msgIn{from{opacity:0;transform:translateY(4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
         .chat-window .win-messages .msg.incoming{background:var(--bg-card);color:var(--text-primary);align-self:flex-start;border-bottom-left-radius:4px}
         .chat-window .win-messages .msg.incoming.bot-msg{background:linear-gradient(135deg,rgba(244,114,182,.12),rgba(167,139,250,.12));border:1px solid var(--border-color)}
@@ -625,6 +626,12 @@
             return (Date.now() - status.lastSeen) < 60000;
         }
 
+        function getUserNameById(userId) {
+            if (userId === BOT_ID) return BOT_NAME;
+            const user = findUserById(userId);
+            return user ? user.displayName : 'Неизвестный';
+        }
+
         // ===== FIREBASE: ЗАГРУЗКА ДАННЫХ =====
         async function loadUsersFromFirebase() {
             if (!isFirebaseReady) return;
@@ -786,8 +793,7 @@
             return allMessages.filter(m => 
                 (m.fromId === currentUser.id && m.toId === userId) || 
                 (m.fromId === userId && m.toId === currentUser.id) ||
-                (m.chatId === userId && m.fromId === currentUser.id) ||
-                (m.chatId === userId && m.toId === currentUser.id)
+                (m.chatId === userId)
             );
         }
 
@@ -1298,6 +1304,10 @@
                 const msgId = msg.id || 'temp';
                 const isDeleted = msg.deleted === true;
                 
+                // Показываем автора только в групповых чатах
+                const showAuthor = isGroupChat && !isBot && msg.fromId !== currentUser.id;
+                const authorName = showAuthor ? getUserNameById(msg.fromId) : '';
+                
                 if (isDeleted) {
                     html += `
                         <div class="msg ${cls} ${botCls}" style="opacity:0.4;font-style:italic;">
@@ -1311,6 +1321,7 @@
                 html += `
                     <div class="msg ${cls} ${botCls}" data-msgid="${msgId}">
                         ${isBot ? '<span class="bot-label">🤖 Бот</span>' : ''}
+                        ${showAuthor ? `<span class="msg-author">${authorName}</span>` : ''}
                         ${msg.text}
                         <span class="m-time">${msg.time}</span>
                         <div class="msg-actions">
@@ -1665,8 +1676,7 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat без фото (Storage не нужен)');
-        console.log('✅ Онлайн-статус, группы, удаление сообщений работают!');
+        console.log('🚀 QwerSAChat с именами авторов в группах!');
         
         const firebaseInit = initFirebase();
 
@@ -1714,4 +1724,4 @@
 </script>
 
 </body>
-    </html>
+                    </html>
