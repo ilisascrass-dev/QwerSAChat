@@ -1536,18 +1536,22 @@
             this.value = '';
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
-// ===== ЗАПУСК =====
-console.log('🚀 QwerSAChat запущен!');
+// ===== АВТОВХОД (ПРОСТОЙ И НАДЁЖНЫЙ) =====
+console.log('🚀 Запуск QwerSAChat...');
 
+// Инициализируем Firebase
 const firebaseInit = initFirebase();
 
 if (firebaseInit) {
-    auth.onAuthStateChanged(async (user) => {
-        console.log('🔄 Auth state:', user ? 'Есть' : 'Нет');
+    // Проверяем авторизацию сразу
+    const currentUserFirebase = auth.currentUser;
+    
+    if (currentUserFirebase) {
+        console.log('✅ Найден текущий пользователь:', currentUserFirebase.email);
         
-        if (user) {
-            try {
-                const doc = await db.collection('users').doc(user.uid).get();
+        // Загружаем данные пользователя из Firestore
+        db.collection('users').doc(currentUserFirebase.uid).get()
+            .then(doc => {
                 if (doc.exists) {
                     const userData = doc.data();
                     currentUser = {
@@ -1562,44 +1566,46 @@ if (firebaseInit) {
                     if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
                     
                     console.log('✅ Автовход для:', currentUser.displayName);
-                    
-                    // Если приложение ещё не активно — запускаем
-                    if (!mainApp.classList.contains('active')) {
-                        await enterApp();
-                    } else {
-                        // Если уже в приложении — просто обновляем данные
-                        renderHeader();
-                        renderChatList();
-                    }
+                    enterApp();
                 } else {
                     console.warn('⚠️ Пользователь в Auth, но не в Firestore');
-                    await auth.signOut();
                 }
-            } catch(e) {
-                console.warn('❌ Ошибка автовхода:', e);
+            })
+            .catch(err => {
+                console.warn('❌ Ошибка загрузки данных:', err);
+            });
+    } else {
+        console.log('👋 Нет активной сессии');
+        
+        // Подписываемся на изменения состояния (на случай, если пользователь войдёт позже)
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                console.log('🔄 Пользователь вошёл:', user.email);
+                try {
+                    const doc = await db.collection('users').doc(user.uid).get();
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        currentUser = {
+                            id: userData.id,
+                            displayName: userData.displayName,
+                            username: userData.username,
+                            email: userData.email,
+                            avatar: userData.avatar || '👤'
+                        };
+                        if (userData.avatarData) currentUser.avatarData = userData.avatarData;
+                        if (userData.lastSeen) onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
+                        if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
+                        
+                        console.log('✅ Автовход для:', currentUser.displayName);
+                        enterApp();
+                    }
+                } catch(e) {
+                    console.warn('❌ Ошибка:', e);
+                }
             }
-        } else {
-            console.log('👋 Автовход не выполнен');
-            if (mainApp.classList.contains('active')) {
-                // Возвращаем на экран входа
-                authScreen.style.display = 'flex';
-                mainApp.classList.remove('active');
-                chatWindow.classList.remove('open');
-                closeProfile();
-                closeSettings();
-                createGroupModal.classList.remove('open');
-                stickerPanel.classList.remove('show');
-                cancelEdit();
-                adminBtn.style.display = 'none';
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-                loginStatus.textContent = '';
-                regStatus.textContent = '';
-                loginEmail.value = '';
-                loginPassword.value = '';
+        });
+    }
             }
-        }
-    });
     
     })();
 </script>
