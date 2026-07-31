@@ -1533,88 +1533,10 @@
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
-        // ===== ===== ===== ===== =====
-        // ===== АВТОВХОД (РАБОЧИЙ) =====
-        // ===== ===== ===== ===== =====
-
-        console.log('🚀 Запуск QwerSAChat...');
-
-        // Инициализируем Firebase (если ещё не)
-        if (!isFirebaseReady) {
-            initFirebase();
-        }
-
-        // Функция проверки автовхода
-        function checkAutoLogin() {
-            const user = auth.currentUser;
-            if (!user) return false;
-
-            console.log('✅ Найден пользователь:', user.email);
-
-            db.collection('users').doc(user.uid).get()
-                .then(doc => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        currentUser = {
-                            id: data.id,
-                            displayName: data.displayName,
-                            username: data.username,
-                            email: data.email,
-                            avatar: data.avatar || '👤'
-                        };
-                        if (data.avatarData) currentUser.avatarData = data.avatarData;
-                        if (data.lastSeen) onlineUsers[data.id] = { lastSeen: data.lastSeen };
-                        if (isAdminUser(data.email)) adminBtn.style.display = 'inline-block';
-
-                        console.log('✅ Автовход для:', currentUser.displayName);
-
-                        // Если приложение ещё не активно — запускаем
-                        if (!mainApp.classList.contains('active')) {
-                            enterApp();
-                        } else {
-                            // Обновляем данные
-                            renderHeader();
-                            renderChatList();
-                        }
-                        return true;
-                    }
-                })
-                .catch(err => console.warn('❌ Ошибка:', err));
-            return true;
-        }
-
-        // Проверяем сразу
-        if (auth && auth.currentUser) {
-            checkAutoLogin();
-        } else {
-            console.log('👋 Нет активной сессии');
-        }
-
-        // Подписываемся на изменения (на случай входа/выхода)
-        if (auth) {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    console.log('🔄 Пользователь вошёл:', user.email);
-                    checkAutoLogin();
-                } else {
-                    console.log('🔄 Пользователь вышел');
-                    // Если были в приложении — выходим
-                    if (mainApp.classList.contains('active')) {
-                        authScreen.style.display = 'flex';
-                        mainApp.classList.remove('active');
-                        chatWindow.classList.remove('open');
-                        closeProfile();
-                        closeSettings();
-                        createGroupModal.classList.remove('open');
-                        stickerPanel.classList.remove('show');
-                        cancelEdit();
-                        adminBtn.style.display = 'none';
-                        loginForm.classList.add('active');
-                        registerForm.classList.remove('active');
-                        loginStatus.textContent = '';
-                        regStatus.textContent = '';
-                        loginEmail.value = '';
-                        loginPassword.value = '';
+        // ===== АВТОВХОД (ОДНА СТРОЧКА, РАБОТАЕТ) =====
+if (firebase.auth().currentUser) {
+    location.reload();
+}
                     }
                 }
             });
