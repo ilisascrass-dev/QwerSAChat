@@ -1529,9 +1529,9 @@
             if (this.files && this.files[0]) { handleVideoUpload(this.files[0]); }
             this.value = '';
         });
-        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar)
-        </script>
-    // ===== ПРОСТОЙ АВТОВХОД =====
+        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
+
+ // ===== ПРОСТОЙ АВТОВХОД =====
 console.log('🔍 Проверка авторизации...');
 
 firebase.auth().onAuthStateChanged(user => {
@@ -1589,4 +1589,4 @@ setTimeout(() => {
 </script>
 
 </body>
- </html>
+    </html>
