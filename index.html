@@ -14,7 +14,6 @@
     </script>
 
     <style>
-        /* ===== ВСЕ СТИЛИ (ТЕ ЖЕ) ===== */
         *{margin:0;padding:0;box-sizing:border-box;transition:all .3s ease}
         :root{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--shadow:0 30px 80px rgba(0,0,0,.7);--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;--font-weight:400}
         .theme-ios{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif}
@@ -502,6 +501,8 @@
                 }
                 db = firebase.firestore();
                 auth = firebase.auth();
+                // Сохраняем сессию в localStorage
+                auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                 isFirebaseReady = true;
                 db.enablePersistence().catch(() => {});
                 document.getElementById('firebaseStatus').textContent = '☁️ Облако подключено';
@@ -969,13 +970,11 @@
             editInput.classList.add('show');
             editMsgInput.focus();
         }
-
         function cancelEdit() {
             editingMsgId = null;
             editInput.classList.remove('show');
             editMsgInput.value = '';
         }
-
         async function saveEdit() {
             if (!editingMsgId) return;
             const newText = editMsgInput.value.trim();
@@ -1534,112 +1533,96 @@
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
-        // ===== СУПЕР-ПРОСТОЙ АВТОВХОД =====
-console.log('🚀 Запуск...');
+        // ===== ===== ===== ===== =====
+        // ===== АВТОВХОД (РАБОЧИЙ) =====
+        // ===== ===== ===== ===== =====
 
-// Инициализируем Firebase
-function initFirebaseSimple() {
-    try {
-        if (firebase.apps.length === 0) {
-            firebase.initializeApp({
-                apiKey: "AIzaSyCqA6dtnpAKKBgBBh5Wcx5eDdOaCsizGE0",
-                authDomain: "qwersachat.firebaseapp.com",
-                projectId: "qwersachat",
-                storageBucket: "qwersachat.firebasestorage.app",
-                messagingSenderId: "216724212476",
-                appId: "1:216724212476:web:a2c1b2f5962124b9a5e579",
-                measurementId: "G-XCZFG4BDTD"
-            });
+        console.log('🚀 Запуск QwerSAChat...');
+
+        // Инициализируем Firebase (если ещё не)
+        if (!isFirebaseReady) {
+            initFirebase();
         }
-        window.db = firebase.firestore();
-        window.auth = firebase.auth();
-        window.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        console.log('🔥 Сервер работает');
-        return true;
-    } catch(e) {
-        console.error('❌ Ошибка:', e);
-        return false;
-    }
-}
 
-// Проверяем авторизацию каждую секунду (пока не найдём пользователя)
-function checkAuthLoop() {
-    if (window.auth && window.auth.currentUser) {
-        const user = window.auth.currentUser;
-        console.log('✅ Найден пользователь:', user.email);
-        
-        // Загружаем данные
-        window.db.collection('users').doc(user.uid).get()
-            .then(doc => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    window.currentUser = {
-                        id: data.id,
-                        displayName: data.displayName,
-                        username: data.username,
-                        email: data.email,
-                        avatar: data.avatar || '👤'
-                    };
-                    if (data.avatarData) window.currentUser.avatarData = data.avatarData;
-                    if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
-                    if (['ilisascrass@gmail.com'].includes(data.email)) {
-                        document.getElementById('adminBtn').style.display = 'inline-block';
+        // Функция проверки автовхода
+        function checkAutoLogin() {
+            const user = auth.currentUser;
+            if (!user) return false;
+
+            console.log('✅ Найден пользователь:', user.email);
+
+            db.collection('users').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        currentUser = {
+                            id: data.id,
+                            displayName: data.displayName,
+                            username: data.username,
+                            email: data.email,
+                            avatar: data.avatar || '👤'
+                        };
+                        if (data.avatarData) currentUser.avatarData = data.avatarData;
+                        if (data.lastSeen) onlineUsers[data.id] = { lastSeen: data.lastSeen };
+                        if (isAdminUser(data.email)) adminBtn.style.display = 'inline-block';
+
+                        console.log('✅ Автовход для:', currentUser.displayName);
+
+                        // Если приложение ещё не активно — запускаем
+                        if (!mainApp.classList.contains('active')) {
+                            enterApp();
+                        } else {
+                            // Обновляем данные
+                            renderHeader();
+                            renderChatList();
+                        }
+                        return true;
                     }
-                    
-                    console.log('✅ Автовход для:', window.currentUser.displayName);
-                    
-                    // Входим в приложение
-                    document.getElementById('authScreen').style.display = 'none';
-                    document.getElementById('mainApp').classList.add('active');
-                    
-                    // Загружаем данные и рендерим
-                    loadUsersFromFirebase();
-                    loadMessagesFromFirebase();
-                    loadGroupsFromFirebase();
-                    subscribeToUsers();
-                    subscribeToMessages();
-                    subscribeToGroups();
-                    loadOnlineStatuses();
-                    sendBotWelcome();
-                    renderHeader();
-                    renderChatList();
-                    if (statusInterval) clearInterval(statusInterval);
-                    statusInterval = setInterval(updateOnlineStatus, 30000);
-                    updateOnlineStatus();
+                })
+                .catch(err => console.warn('❌ Ошибка:', err));
+            return true;
+        }
+
+        // Проверяем сразу
+        if (auth && auth.currentUser) {
+            checkAutoLogin();
+        } else {
+            console.log('👋 Нет активной сессии');
+        }
+
+        // Подписываемся на изменения (на случай входа/выхода)
+        if (auth) {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    console.log('🔄 Пользователь вошёл:', user.email);
+                    checkAutoLogin();
+                } else {
+                    console.log('🔄 Пользователь вышел');
+                    // Если были в приложении — выходим
+                    if (mainApp.classList.contains('active')) {
+                        authScreen.style.display = 'flex';
+                        mainApp.classList.remove('active');
+                        chatWindow.classList.remove('open');
+                        closeProfile();
+                        closeSettings();
+                        createGroupModal.classList.remove('open');
+                        stickerPanel.classList.remove('show');
+                        cancelEdit();
+                        adminBtn.style.display = 'none';
+                        loginForm.classList.add('active');
+                        registerForm.classList.remove('active');
+                        loginStatus.textContent = '';
+                        regStatus.textContent = '';
+                        loginEmail.value = '';
+                        loginPassword.value = '';
+                    }
                 }
             });
-        return true;
-    }
-    return false;
-}
-
-// Запускаем
-initFirebaseSimple();
-
-// Проверяем сразу
-if (!checkAuthLoop()) {
-    // Если нет пользователя — ждём его появления
-    console.log('👋 Нет пользователя, ждём...');
-    const interval = setInterval(() => {
-        if (checkAuthLoop()) {
-            clearInterval(interval);
-            console.log('✅ Автовход сработал!');
         }
-    }, 1000);
-    
-    // Подписываемся на изменения
-    if (window.auth) {
-        window.auth.onAuthStateChanged(user => {
-            if (user) {
-                console.log('🔄 Пользователь вошёл:', user.email);
-                checkAuthLoop();
-            }
-        });
-    }
-}
-                               
+
+        console.log('✅ Автовход настроен!');
     })();
 </script>
 
 </body>
-                </html>
+</html>
