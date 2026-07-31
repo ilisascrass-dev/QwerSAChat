@@ -52,10 +52,10 @@
         .chat-header .left .avatar-sm .online-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-secondary)}
         .chat-header .left .avatar-sm .online-dot.online{background:#4caf50}
         .chat-header .left .avatar-sm .online-dot.offline{background:#555}
+        .chat-header .left .avatar-sm .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--bg-secondary);color:#fff;z-index:2}
         .chat-header .left .avatar-sm img,.chat-header .left .avatar-sm video{width:100%;height:100%;object-fit:cover}
         .chat-header .left .avatar-sm .avatar-emoji{font-size:18px}
         .chat-header .left .avatar-sm:hover{transform:scale(1.05)}
-        .chat-header .left .avatar-sm .badge{position:absolute;bottom:-1px;right:-1px;background:var(--gradient-start);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;border:2px solid var(--bg-secondary);color:#fff}
         .chat-header .left .info .name{color:var(--text-primary);font-weight:700;font-size:17px;display:flex;align-items:center;gap:6px}
         .chat-header .left .info .name .verified{color:var(--gradient-start);font-size:14px}
         .chat-header .left .info .status{color:var(--text-secondary);font-size:12px}
@@ -86,13 +86,14 @@
         .chat-item .avatar .online-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-secondary)}
         .chat-item .avatar .online-dot.online{background:#4caf50}
         .chat-item .avatar .online-dot.offline{background:#555}
+        .chat-item .avatar .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--bg-secondary);color:#fff;z-index:2}
         .chat-item .avatar img,.chat-item .avatar video{width:100%;height:100%;object-fit:cover}
         .chat-item .avatar .avatar-emoji{font-size:20px}
         .chat-item .avatar.bot{background:linear-gradient(135deg,#f472b6,#a78bfa)}
-        .chat-item .avatar .v-badge{position:absolute;bottom:-1px;right:-1px;background:var(--gradient-start);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;border:2px solid var(--bg-secondary);color:#fff}
         .chat-item .info{flex:1;min-width:0}
         .chat-item .info .top{display:flex;justify-content:space-between;align-items:center}
         .chat-item .info .top .name{color:var(--text-primary);font-weight:600;font-size:15px;display:flex;align-items:center;gap:4px}
+        .chat-item .info .top .name .v-icon{color:var(--gradient-start);font-size:12px}
         .chat-item .info .top .time{color:var(--text-secondary);font-size:11px;flex-shrink:0}
         .chat-item .info .bottom{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
         .chat-item .info .bottom .last-msg{color:var(--text-secondary);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -117,13 +118,14 @@
         .chat-window .win-header .w-avatar .online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-secondary)}
         .chat-window .win-header .w-avatar .online-dot.online{background:#4caf50}
         .chat-window .win-header .w-avatar .online-dot.offline{background:#555}
+        .chat-window .win-header .w-avatar .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;border:2px solid var(--bg-secondary);color:#fff;z-index:2}
         .chat-window .win-header .w-avatar img,.chat-window .win-header .w-avatar video{width:100%;height:100%;object-fit:cover}
         .chat-window .win-header .w-avatar .avatar-emoji{font-size:16px}
         .chat-window .win-header .w-avatar:hover{transform:scale(1.08)}
         .chat-window .win-header .w-avatar.bot{background:linear-gradient(135deg,#f472b6,#a78bfa)}
-        .chat-window .win-header .w-avatar .v-sm{position:absolute;bottom:-2px;right:-2px;background:var(--gradient-start);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg-secondary);color:#fff}
         .chat-window .win-header .w-info{flex:1;cursor:pointer}
         .chat-window .win-header .w-info .w-name{color:var(--text-primary);font-weight:600;font-size:16px;display:flex;align-items:center;gap:4px}
+        .chat-window .win-header .w-info .w-name .v-icon{color:var(--gradient-start);font-size:13px}
         .chat-window .win-header .w-info .w-status{color:var(--text-secondary);font-size:11px}
         .chat-window .win-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
         .chat-window .win-messages::-webkit-scrollbar{width:3px}
@@ -146,12 +148,12 @@
         .chat-window .win-messages .msg .bot-label{font-size:8px;text-transform:uppercase;letter-spacing:.5px;opacity:.3;display:block;margin-bottom:2px}
         .chat-window .win-messages .sys-msg{color:var(--text-secondary);font-size:13px;text-align:center;padding:16px 0;font-style:italic}
         .chat-window .win-input{padding:10px 16px;display:flex;gap:10px;border-top:1px solid var(--border-color);flex-shrink:0;background:var(--bg-secondary)}
+        .chat-window .win-input .sticker-btn{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer;padding:8px 10px;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center}
+        .chat-window .win-input .sticker-btn:hover{background:var(--bg-card);color:var(--text-primary)}
         .chat-window .win-input input{flex:1;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;font-family:var(--font-family);font-weight:var(--font-weight)}
         .chat-window .win-input input:focus{border-color:var(--gradient-start)}
         .chat-window .win-input input:disabled{opacity:.3;cursor:not-allowed}
         .chat-window .win-input input::placeholder{color:var(--text-secondary)}
-        .chat-window .win-input .sticker-btn{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer;padding:8px 10px;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center}
-        .chat-window .win-input .sticker-btn:hover{background:var(--bg-card);color:var(--text-primary)}
         .chat-window .win-input button{padding:10px 22px;border:none;border-radius:60px;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s;box-shadow:0 2px 16px rgba(74,124,247,.15);flex-shrink:0;font-family:var(--font-family)}
         .chat-window .win-input button:hover:not(:disabled){transform:scale(1.02)}
         .chat-window .win-input button:active:not(:disabled){transform:scale(.96)}
@@ -172,9 +174,9 @@
         .profile-modal .modal-box .m-avatar .online-dot{position:absolute;bottom:2px;right:2px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg-secondary)}
         .profile-modal .modal-box .m-avatar .online-dot.online{background:#4caf50}
         .profile-modal .modal-box .m-avatar .online-dot.offline{background:#555}
+        .profile-modal .modal-box .m-avatar .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;border:3px solid var(--bg-secondary);color:#fff;z-index:2}
         .profile-modal .modal-box .m-avatar img,.profile-modal .modal-box .m-avatar video{width:100%;height:100%;object-fit:cover}
         .profile-modal .modal-box .m-avatar .avatar-emoji{font-size:34px}
-        .profile-modal .modal-box .m-avatar .v-lg{position:absolute;bottom:0;right:0;background:var(--gradient-start);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;border:3px solid var(--bg-secondary);color:#fff}
         .profile-modal .modal-box .m-avatar.bot{background:linear-gradient(135deg,#f472b6,#a78bfa)}
         .profile-modal .modal-box .m-name{color:var(--text-primary);font-size:22px;font-weight:700;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
         .profile-modal .modal-box .m-name .v-icon{color:var(--gradient-start);font-size:18px}
@@ -231,6 +233,7 @@
         .search-hint .hint-item .hint-avatar .online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-secondary)}
         .search-hint .hint-item .hint-avatar .online-dot.online{background:#4caf50}
         .search-hint .hint-item .hint-avatar .online-dot.offline{background:#555}
+        .search-hint .hint-item .hint-avatar .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg-secondary);color:#fff;z-index:2}
         .search-hint .hint-item .hint-avatar img,.search-hint .hint-item .hint-avatar video{width:100%;height:100%;object-fit:cover}
         .search-hint .hint-item .hint-info{flex:1}
         .search-hint .hint-item .hint-info .hint-name{color:var(--text-primary);font-size:14px;font-weight:600}
@@ -308,12 +311,11 @@
                 <div class="avatar-sm" id="headerAvatar">
                     <span class="avatar-emoji" id="headerAvatarEmoji">👤</span>
                     <span class="online-dot online" id="headerOnlineDot"></span>
-                    <span class="badge" id="headerBadge" style="display:none;">✓</span>
+                    <span class="verified-badge" id="headerVerifiedBadge" style="display:none;">✓</span>
                 </div>
                 <div class="info">
                     <div class="name">
                         <span id="headerName">—</span>
-                        <span class="verified" id="headerVerified" style="display:none;">✓</span>
                     </div>
                     <div class="status" id="headerStatus">онлайн</div>
                 </div>
@@ -343,11 +345,11 @@
                 <div class="w-avatar" id="wAvatar">
                     <span class="avatar-emoji" id="wAvatarEmoji">👤</span>
                     <span class="online-dot online" id="wOnlineDot"></span>
+                    <span class="verified-badge" id="wVerifiedBadge" style="display:none;">✓</span>
                 </div>
                 <div class="w-info" id="wInfo">
                     <div class="w-name">
                         <span id="wName">—</span>
-                        <span class="v-icon" id="wVerified" style="display:none;">✓</span>
                     </div>
                     <div class="w-status" id="wStatus">онлайн</div>
                 </div>
@@ -386,10 +388,10 @@
                 <div class="m-avatar" id="mAvatar">
                     <span class="avatar-emoji" id="mAvatarEmoji">👤</span>
                     <span class="online-dot online" id="mOnlineDot"></span>
+                    <span class="verified-badge" id="mVerifiedBadge" style="display:none;">✓</span>
                 </div>
                 <div class="m-name">
                     <span id="mName">—</span>
-                    <span class="v-icon" id="mVerified" style="display:none;">✓</span>
                 </div>
                 <div class="m-username" id="mUsername">@—</div>
                 <div style="text-align:center;"><span class="m-id" id="mId">ID: —</span></div>
@@ -601,6 +603,11 @@
             }
         }
 
+        function isVerified(user) {
+            if (!user || user.isBot) return false;
+            return VERIFIED_USERS.includes(user.displayName);
+        }
+
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let currentUser = null;
         let currentChatPartner = null;
@@ -636,9 +643,8 @@
         const headerAvatar = document.getElementById('headerAvatar');
         const headerAvatarEmoji = document.getElementById('headerAvatarEmoji');
         const headerOnlineDot = document.getElementById('headerOnlineDot');
-        const headerBadge = document.getElementById('headerBadge');
+        const headerVerifiedBadge = document.getElementById('headerVerifiedBadge');
         const headerName = document.getElementById('headerName');
-        const headerVerified = document.getElementById('headerVerified');
         const headerStatus = document.getElementById('headerStatus');
 
         const searchInput = document.getElementById('searchInput');
@@ -650,8 +656,8 @@
         const wAvatar = document.getElementById('wAvatar');
         const wAvatarEmoji = document.getElementById('wAvatarEmoji');
         const wOnlineDot = document.getElementById('wOnlineDot');
+        const wVerifiedBadge = document.getElementById('wVerifiedBadge');
         const wName = document.getElementById('wName');
-        const wVerified = document.getElementById('wVerified');
         const wStatus = document.getElementById('wStatus');
         const wInfo = document.getElementById('wInfo');
         const winMessages = document.getElementById('winMessages');
@@ -668,8 +674,8 @@
         const mAvatar = document.getElementById('mAvatar');
         const mAvatarEmoji = document.getElementById('mAvatarEmoji');
         const mOnlineDot = document.getElementById('mOnlineDot');
+        const mVerifiedBadge = document.getElementById('mVerifiedBadge');
         const mName = document.getElementById('mName');
-        const mVerified = document.getElementById('mVerified');
         const mUsername = document.getElementById('mUsername');
         const mId = document.getElementById('mId');
         const mBotLabel = document.getElementById('mBotLabel');
@@ -771,11 +777,6 @@
         function findUserByUsername(username) {
             if (username === BOT_USERNAME) return getBot();
             return allUsers.find(u => u.username.toLowerCase() === username.toLowerCase()) || null;
-        }
-
-        function isVerified(user) {
-            if (!user || user.isBot) return false;
-            return VERIFIED_USERS.includes(user.displayName);
         }
 
         function getTime() {
@@ -1093,9 +1094,10 @@
                         <div class="hint-avatar" style="position:relative;">
                             ${avatarHTML}
                             <span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>
+                            ${verified ? `<span class="verified-badge">✓</span>` : ''}
                         </div>
                         <div class="hint-info">
-                            <div class="hint-name">${user.displayName}${verified ? ' <span class="hint-verified">✓</span>' : ''}</div>
+                            <div class="hint-name">${user.displayName}</div>
                             <div class="hint-username">@${user.username}</div>
                         </div>
                     </div>
@@ -1145,9 +1147,10 @@
             allUsers.forEach(user => {
                 if (user.id === currentUser.id) return;
                 const emoji = user.avatar || '👤';
+                const verified = isVerified(user);
                 html += `
                     <div class="member-item" data-id="${user.id}">
-                        <div class="member-avatar"><span>${emoji}</span></div>
+                        <div class="member-avatar"><span>${emoji}${verified ? ' ✓' : ''}</span></div>
                         <div class="member-name">${user.displayName}</div>
                         <span class="member-check hidden">✓</span>
                     </div>
@@ -1332,9 +1335,8 @@
             headerOnlineDot.className = 'online-dot online';
             
             const v = isVerified(currentUser);
-            headerBadge.style.display = v ? 'flex' : 'none';
+            headerVerifiedBadge.style.display = v ? 'flex' : 'none';
             headerName.textContent = currentUser.displayName;
-            headerVerified.style.display = v ? 'inline' : 'none';
             headerStatus.textContent = 'онлайн';
         }
 
@@ -1390,7 +1392,7 @@
                         <div class="avatar ${avatarClass}" style="position:relative;">
                             ${avatarHTML}
                             ${!isBot && !isGroup ? `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>` : ''}
-                            ${verified ? `<span class="v-badge">✓</span>` : ''}
+                            ${verified ? `<span class="verified-badge">✓</span>` : ''}
                         </div>
                         <div class="info">
                             <div class="top">
@@ -1435,7 +1437,6 @@
                     }
                 });
                 el.addEventListener('touchend', function() {
-                    // Убираем свайп через секунду
                     setTimeout(() => {
                         this.classList.remove('swiped');
                     }, 2000);
@@ -1474,7 +1475,7 @@
             wAvatarEmoji.textContent = '👥';
             wAvatar.innerHTML = '<span class="avatar-emoji">👥</span>';
             wName.textContent = group.name;
-            wVerified.style.display = 'none';
+            wVerifiedBadge.style.display = 'none';
             wStatus.textContent = `${group.members.length} участников`;
             
             wInfo.onclick = () => openGroupProfile(group);
@@ -1503,7 +1504,7 @@
 
             chatWindow.classList.add('open');
             const isBot = isBotChat;
-            const verified = !isBot && isVerified(user);
+            const verified = isVerified(user);
             const avatarClass = isBot ? 'bot' : 'user';
             const emoji = user.avatar || '👤';
             
@@ -1513,11 +1514,11 @@
             
             const isOnline = !isBot && isUserOnline(user.id);
             wOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
+            wVerifiedBadge.style.display = verified ? 'flex' : 'none';
             
             wAvatar.onclick = () => openProfile(user);
             
             wName.textContent = user.displayName;
-            wVerified.style.display = verified ? 'inline' : 'none';
             wStatus.textContent = isBot ? '🤖 Бот QwerSAChat' : (isOnline ? 'онлайн' : 'был недавно');
 
             wInfo.onclick = () => openProfile(user);
@@ -1695,7 +1696,7 @@
         function openProfile(user) {
             if (!user) return;
             const isBot = user.id === BOT_ID;
-            const verified = !isBot && isVerified(user);
+            const verified = isVerified(user);
             const avatarClass = isBot ? 'bot' : 'user';
             const isOnline = !isBot && isUserOnline(user.id);
 
@@ -1704,10 +1705,9 @@
             mAvatarEmoji.textContent = emoji;
             renderAvatarElement(mAvatar, user.avatarData, emoji);
             mOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
+            mVerifiedBadge.style.display = verified ? 'flex' : 'none';
             
-            mName.innerHTML = user.displayName;
-            mVerified.style.display = 'none';
-            
+            mName.textContent = user.displayName;
             mUsername.textContent = isBot ? '🤖 Бот' : '@' + user.username;
             mId.textContent = 'ID: ' + user.id;
 
@@ -1976,7 +1976,7 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat со стикерами, тёмной темой, удалением чатов и редактированием!');
+        console.log('🚀 QwerSAChat с галочкой в профиле!');
         
         const firebaseInit = initFirebase();
 
@@ -2024,4 +2024,4 @@
 </script>
 
 </body>
-    </html>
+        </html>
