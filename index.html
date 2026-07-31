@@ -1529,49 +1529,64 @@
             if (this.files && this.files[0]) { handleVideoUpload(this.files[0]); }
             this.value = '';
         });
-        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
+        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar)
+        </script>
+    // ===== ПРОСТОЙ АВТОВХОД =====
+console.log('🔍 Проверка авторизации...');
 
-<script>
-    // ===== АВТОВХОД ДЛЯ ВСЕХ =====
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            if (document.getElementById('authScreen').style.display !== 'none') {
-                console.log('✅ Автовход для:', user.email);
-                document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('mainApp').classList.add('active');
+firebase.auth().onAuthStateChanged(user => {
+    console.log('📌 Статус:', user ? 'Есть' : 'Нет');
+    
+    if (user) {
+        // Пользователь есть — входим
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('mainApp').classList.add('active');
+        console.log('✅ Вход для:', user.email);
+        
+        // Подгружаем данные
+        db.collection('users').doc(user.uid).get().then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                window.currentUser = {
+                    id: data.id,
+                    displayName: data.displayName,
+                    username: data.username,
+                    email: data.email,
+                    avatar: data.avatar || '👤'
+                };
+                if (data.avatarData) window.currentUser.avatarData = data.avatarData;
+                if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
                 
-                db.collection('users').doc(user.uid).get().then(doc => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        window.currentUser = {
-                            id: data.id,
-                            displayName: data.displayName,
-                            username: data.username,
-                            email: data.email,
-                            avatar: data.avatar || '👤'
-                        };
-                        if (data.avatarData) window.currentUser.avatarData = data.avatarData;
-                        if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
-                        
-                        // Админ-кнопка только для ilisascrass@gmail.com
-                        if (['ilisascrass@gmail.com'].includes(data.email)) {
-                            document.getElementById('adminBtn').style.display = 'inline-block';
-                        } else {
-                            document.getElementById('adminBtn').style.display = 'none';
-                        }
-                        
-                        if (typeof renderHeader === 'function') renderHeader();
-                        if (typeof renderChatList === 'function') renderChatList();
-                    }
-                });
+                // Админ-кнопка
+                if (data.email === 'ilisascrass@gmail.com') {
+                    document.getElementById('adminBtn').style.display = 'inline-block';
+                }
+                
+                // Обновляем интерфейс
+                if (typeof renderHeader === 'function') renderHeader();
+                if (typeof renderChatList === 'function') renderChatList();
+                if (typeof loadUsersFromFirebase === 'function') loadUsersFromFirebase();
+                if (typeof loadMessagesFromFirebase === 'function') loadMessagesFromFirebase();
+                if (typeof loadGroupsFromFirebase === 'function') loadGroupsFromFirebase();
             }
-        } else {
-            document.getElementById('authScreen').style.display = 'flex';
-            document.getElementById('mainApp').classList.remove('active');
-            document.getElementById('chatWindow').classList.remove('open');
-        }
-    });
+        });
+    } else {
+        // Пользователя нет — показываем вход
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('mainApp').classList.remove('active');
+        document.getElementById('chatWindow').classList.remove('open');
+        console.log('👋 Показываем вход');
+    }
+});
+
+// Принудительно проверяем сразу
+setTimeout(() => {
+    if (firebase.auth().currentUser) {
+        console.log('🔄 Форсированный вход');
+        location.reload();
+    }
+}, 1000);
 </script>
 
 </body>
-            </html>
+ </html>
