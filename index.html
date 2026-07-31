@@ -1531,63 +1531,46 @@
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
-        // ===== ===== ===== ===== =====
-        // ===== АВТОВХОД (РАБОЧИЙ) =====
-        // ===== ===== ===== ===== =====
-
-        console.log('🚀 QwerSAChat запущен!');
-
-        // Инициализируем Firebase
-        const firebaseInit = initFirebase();
-
-        if (firebaseInit) {
-            // Проверяем авторизацию при загрузке
-            const checkUser = setInterval(() => {
-                if (auth.currentUser && !mainApp.classList.contains('active')) {
-                    console.log('✅ Автовход: пользователь найден');
-                    clearInterval(checkUser);
-                    // Перезагружаем страницу для корректного входа
-                    location.reload();
-                } else if (auth.currentUser && mainApp.classList.contains('active')) {
-                    clearInterval(checkUser);
-                }
-            }, 500);
-
-            // Через 5 секунд отключаем проверку
-            setTimeout(() => {
-                clearInterval(checkUser);
-            }, 5000);
-
-            // Подписываемся на изменения
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    console.log('🔄 Пользователь вошёл:', user.email);
-                    if (!mainApp.classList.contains('active')) {
-                        location.reload();
+<script>
+    // ===== АВТОВХОД ДЛЯ ВСЕХ =====
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            if (document.getElementById('authScreen').style.display !== 'none') {
+                console.log('✅ Автовход для:', user.email);
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('mainApp').classList.add('active');
+                
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        window.currentUser = {
+                            id: data.id,
+                            displayName: data.displayName,
+                            username: data.username,
+                            email: data.email,
+                            avatar: data.avatar || '👤'
+                        };
+                        if (data.avatarData) window.currentUser.avatarData = data.avatarData;
+                        if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
+                        
+                        // Админ-кнопка только для ilisascrass@gmail.com
+                        if (['ilisascrass@gmail.com'].includes(data.email)) {
+                            document.getElementById('adminBtn').style.display = 'inline-block';
+                        } else {
+                            document.getElementById('adminBtn').style.display = 'none';
+                        }
+                        
+                        if (typeof renderHeader === 'function') renderHeader();
+                        if (typeof renderChatList === 'function') renderChatList();
                     }
-                } else {
-                    console.log('👋 Пользователь вышел');
-                    if (mainApp.classList.contains('active')) {
-                        authScreen.style.display = 'flex';
-                        mainApp.classList.remove('active');
-                        chatWindow.classList.remove('open');
-                        closeProfile();
-                        closeSettings();
-                        createGroupModal.classList.remove('open');
-                        stickerPanel.classList.remove('show');
-                        cancelEdit();
-                        adminBtn.style.display = 'none';
-                        loginForm.classList.add('active');
-                        registerForm.classList.remove('active');
-                        loginStatus.textContent = '';
-                        regStatus.textContent = '';
-                        loginEmail.value = '';
-                        loginPassword.value = '';
-                    }
-                }
-            });
+                });
+            }
+        } else {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('mainApp').classList.remove('active');
+            document.getElementById('chatWindow').classList.remove('open');
         }
-    })();
+    });
 </script>
 
 </body>
