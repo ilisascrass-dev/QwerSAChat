@@ -343,7 +343,6 @@
             </div>
         </div>
 
-        <!-- ===== CREATE GROUP MODAL ===== -->
         <div class="create-group-modal" id="createGroupModal">
             <div class="modal-box">
                 <div class="modal-title">👥 Создать группу</div>
@@ -386,7 +385,6 @@
             </div>
         </div>
 
-        <!-- ===== SETTINGS ===== -->
         <div class="settings-modal" id="settingsModal">
             <div class="settings-header">
                 <button class="back-btn" id="settingsCloseBtn">‹</button>
@@ -489,7 +487,10 @@
 
         function initFirebase() {
             try {
-                firebase.initializeApp(firebaseConfig);
+                // Проверяем, не инициализирован ли уже
+                if (firebase.apps.length === 0) {
+                    firebase.initializeApp(firebaseConfig);
+                }
                 db = firebase.firestore();
                 auth = firebase.auth();
                 isFirebaseReady = true;
@@ -972,9 +973,13 @@
 
         // ===== АВТОРИЗАЦИЯ =====
         async function login() {
+            // Проверяем Firebase
             if (!isFirebaseReady || !auth) {
-                showStatus(loginStatus, '❌ Firebase не инициализирован', true);
-                return;
+                // Пробуем переинициализировать
+                if (!initFirebase()) {
+                    showStatus(loginStatus, '❌ Ошибка подключения к Firebase. Обновите страницу.', true);
+                    return;
+                }
             }
             const email = loginEmail.value.trim();
             const password = loginPassword.value.trim();
@@ -1010,8 +1015,10 @@
 
         async function register() {
             if (!isFirebaseReady || !auth) {
-                showStatus(regStatus, '❌ Firebase не инициализирован', true);
-                return;
+                if (!initFirebase()) {
+                    showStatus(regStatus, '❌ Ошибка подключения к Firebase. Обновите страницу.', true);
+                    return;
+                }
             }
             const displayName = regDisplayName.value.trim();
             const username = regUsername.value.trim();
