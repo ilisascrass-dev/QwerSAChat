@@ -1536,34 +1536,71 @@
             this.value = '';
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
+// ===== ЗАПУСК =====
+console.log('🚀 QwerSAChat запущен!');
 
-        // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat запущен!');
-        const firebaseInit = initFirebase();
-        if (firebaseInit) {
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    try {
-                        const doc = await db.collection('users').doc(user.uid).get();
-                        if (doc.exists) {
-                            const userData = doc.data();
-                            currentUser = {
-                                id: userData.id,
-                                displayName: userData.displayName,
-                                username: userData.username,
-                                email: userData.email,
-                                avatar: userData.avatar || '👤'
-                            };
-                            if (userData.avatarData) currentUser.avatarData = userData.avatarData;
-                            if (userData.lastSeen) onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
-                            if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
-                            await enterApp();
-                            console.log('✅ Автовход для:', currentUser.displayName);
-                        }
-                    } catch(e) { console.warn('Ошибка автовхода:', e); }
-                } else { console.log('👋 Автовход не выполнен'); }
-            });
+const firebaseInit = initFirebase();
+
+if (firebaseInit) {
+    auth.onAuthStateChanged(async (user) => {
+        console.log('🔄 Auth state:', user ? 'Есть' : 'Нет');
+        
+        if (user) {
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const userData = doc.data();
+                    currentUser = {
+                        id: userData.id,
+                        displayName: userData.displayName,
+                        username: userData.username,
+                        email: userData.email,
+                        avatar: userData.avatar || '👤'
+                    };
+                    if (userData.avatarData) currentUser.avatarData = userData.avatarData;
+                    if (userData.lastSeen) onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
+                    if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
+                    
+                    console.log('✅ Автовход для:', currentUser.displayName);
+                    
+                    // Если приложение ещё не активно — запускаем
+                    if (!mainApp.classList.contains('active')) {
+                        await enterApp();
+                    } else {
+                        // Если уже в приложении — просто обновляем данные
+                        renderHeader();
+                        renderChatList();
+                    }
+                } else {
+                    console.warn('⚠️ Пользователь в Auth, но не в Firestore');
+                    await auth.signOut();
+                }
+            } catch(e) {
+                console.warn('❌ Ошибка автовхода:', e);
+            }
+        } else {
+            console.log('👋 Автовход не выполнен');
+            if (mainApp.classList.contains('active')) {
+                // Возвращаем на экран входа
+                authScreen.style.display = 'flex';
+                mainApp.classList.remove('active');
+                chatWindow.classList.remove('open');
+                closeProfile();
+                closeSettings();
+                createGroupModal.classList.remove('open');
+                stickerPanel.classList.remove('show');
+                cancelEdit();
+                adminBtn.style.display = 'none';
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                loginStatus.textContent = '';
+                regStatus.textContent = '';
+                loginEmail.value = '';
+                loginPassword.value = '';
+            }
         }
+    });
+    
     })();
 </script>
 
