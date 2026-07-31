@@ -1534,74 +1534,110 @@
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
-        // ===== ЗАПУСК С АВТОВХОДОМ =====
-        console.log('🚀 Запуск QwerSAChat...');
-        
-        const firebaseInit = initFirebase();
-        
-        if (firebaseInit) {
-            // Проверяем текущую сессию
-            const currentFirebaseUser = auth.currentUser;
-            
-            if (currentFirebaseUser) {
-                console.log('✅ Найден активный пользователь:', currentFirebaseUser.email);
-                
-                db.collection('users').doc(currentFirebaseUser.uid).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            const userData = doc.data();
-                            currentUser = {
-                                id: userData.id,
-                                displayName: userData.displayName,
-                                username: userData.username,
-                                email: userData.email,
-                                avatar: userData.avatar || '👤'
-                            };
-                            if (userData.avatarData) currentUser.avatarData = userData.avatarData;
-                            if (userData.lastSeen) onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
-                            if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
-                            
-                            console.log('✅ Автовход выполнен для:', currentUser.displayName);
-                            enterApp();
-                        } else {
-                            console.warn('⚠️ Пользователь в Auth, но не в Firestore');
-                        }
-                    })
-                    .catch(err => {
-                        console.warn('❌ Ошибка загрузки данных:', err);
-                    });
-            } else {
-                console.log('👋 Нет активной сессии');
-                
-                // Слушаем изменения (на случай, если пользователь войдёт)
-                auth.onAuthStateChanged(async (user) => {
-                    if (user) {
-                        console.log('🔄 Пользователь вошёл:', user.email);
-                        try {
-                            const doc = await db.collection('users').doc(user.uid).get();
-                            if (doc.exists) {
-                                const userData = doc.data();
-                                currentUser = {
-                                    id: userData.id,
-                                    displayName: userData.displayName,
-                                    username: userData.username,
-                                    email: userData.email,
-                                    avatar: userData.avatar || '👤'
-                                };
-                                if (userData.avatarData) currentUser.avatarData = userData.avatarData;
-                                if (userData.lastSeen) onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
-                                if (isAdminUser(userData.email)) adminBtn.style.display = 'inline-block';
-                                
-                                console.log('✅ Автовход для:', currentUser.displayName);
-                                enterApp();
-                            }
-                        } catch(e) {
-                            console.warn('❌ Ошибка:', e);
-                        }
-                    }
-                });
-            }
+        // ===== СУПЕР-ПРОСТОЙ АВТОВХОД =====
+console.log('🚀 Запуск...');
+
+// Инициализируем Firebase
+function initFirebaseSimple() {
+    try {
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyCqA6dtnpAKKBgBBh5Wcx5eDdOaCsizGE0",
+                authDomain: "qwersachat.firebaseapp.com",
+                projectId: "qwersachat",
+                storageBucket: "qwersachat.firebasestorage.app",
+                messagingSenderId: "216724212476",
+                appId: "1:216724212476:web:a2c1b2f5962124b9a5e579",
+                measurementId: "G-XCZFG4BDTD"
+            });
         }
+        window.db = firebase.firestore();
+        window.auth = firebase.auth();
+        window.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        console.log('🔥 Сервер работает');
+        return true;
+    } catch(e) {
+        console.error('❌ Ошибка:', e);
+        return false;
+    }
+}
+
+// Проверяем авторизацию каждую секунду (пока не найдём пользователя)
+function checkAuthLoop() {
+    if (window.auth && window.auth.currentUser) {
+        const user = window.auth.currentUser;
+        console.log('✅ Найден пользователь:', user.email);
+        
+        // Загружаем данные
+        window.db.collection('users').doc(user.uid).get()
+            .then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    window.currentUser = {
+                        id: data.id,
+                        displayName: data.displayName,
+                        username: data.username,
+                        email: data.email,
+                        avatar: data.avatar || '👤'
+                    };
+                    if (data.avatarData) window.currentUser.avatarData = data.avatarData;
+                    if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
+                    if (['ilisascrass@gmail.com'].includes(data.email)) {
+                        document.getElementById('adminBtn').style.display = 'inline-block';
+                    }
+                    
+                    console.log('✅ Автовход для:', window.currentUser.displayName);
+                    
+                    // Входим в приложение
+                    document.getElementById('authScreen').style.display = 'none';
+                    document.getElementById('mainApp').classList.add('active');
+                    
+                    // Загружаем данные и рендерим
+                    loadUsersFromFirebase();
+                    loadMessagesFromFirebase();
+                    loadGroupsFromFirebase();
+                    subscribeToUsers();
+                    subscribeToMessages();
+                    subscribeToGroups();
+                    loadOnlineStatuses();
+                    sendBotWelcome();
+                    renderHeader();
+                    renderChatList();
+                    if (statusInterval) clearInterval(statusInterval);
+                    statusInterval = setInterval(updateOnlineStatus, 30000);
+                    updateOnlineStatus();
+                }
+            });
+        return true;
+    }
+    return false;
+}
+
+// Запускаем
+initFirebaseSimple();
+
+// Проверяем сразу
+if (!checkAuthLoop()) {
+    // Если нет пользователя — ждём его появления
+    console.log('👋 Нет пользователя, ждём...');
+    const interval = setInterval(() => {
+        if (checkAuthLoop()) {
+            clearInterval(interval);
+            console.log('✅ Автовход сработал!');
+        }
+    }, 1000);
+    
+    // Подписываемся на изменения
+    if (window.auth) {
+        window.auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log('🔄 Пользователь вошёл:', user.email);
+                checkAuthLoop();
+            }
+        });
+    }
+}
+                               
     })();
 </script>
 
