@@ -501,8 +501,6 @@
                 }
                 db = firebase.firestore();
                 auth = firebase.auth();
-                // Сохраняем сессию в localStorage
-                auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                 isFirebaseReady = true;
                 db.enablePersistence().catch(() => {});
                 document.getElementById('firebaseStatus').textContent = '☁️ Облако подключено';
@@ -1533,18 +1531,64 @@
         });
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
-        // ===== АВТОВХОД (ОДНА СТРОЧКА, РАБОТАЕТ) =====
-if (firebase.auth().currentUser) {
-    location.reload();
-}
+        // ===== ===== ===== ===== =====
+        // ===== АВТОВХОД (РАБОЧИЙ) =====
+        // ===== ===== ===== ===== =====
+
+        console.log('🚀 QwerSAChat запущен!');
+
+        // Инициализируем Firebase
+        const firebaseInit = initFirebase();
+
+        if (firebaseInit) {
+            // Проверяем авторизацию при загрузке
+            const checkUser = setInterval(() => {
+                if (auth.currentUser && !mainApp.classList.contains('active')) {
+                    console.log('✅ Автовход: пользователь найден');
+                    clearInterval(checkUser);
+                    // Перезагружаем страницу для корректного входа
+                    location.reload();
+                } else if (auth.currentUser && mainApp.classList.contains('active')) {
+                    clearInterval(checkUser);
+                }
+            }, 500);
+
+            // Через 5 секунд отключаем проверку
+            setTimeout(() => {
+                clearInterval(checkUser);
+            }, 5000);
+
+            // Подписываемся на изменения
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    console.log('🔄 Пользователь вошёл:', user.email);
+                    if (!mainApp.classList.contains('active')) {
+                        location.reload();
+                    }
+                } else {
+                    console.log('👋 Пользователь вышел');
+                    if (mainApp.classList.contains('active')) {
+                        authScreen.style.display = 'flex';
+                        mainApp.classList.remove('active');
+                        chatWindow.classList.remove('open');
+                        closeProfile();
+                        closeSettings();
+                        createGroupModal.classList.remove('open');
+                        stickerPanel.classList.remove('show');
+                        cancelEdit();
+                        adminBtn.style.display = 'none';
+                        loginForm.classList.add('active');
+                        registerForm.classList.remove('active');
+                        loginStatus.textContent = '';
+                        regStatus.textContent = '';
+                        loginEmail.value = '';
+                        loginPassword.value = '';
                     }
                 }
             });
         }
-
-        console.log('✅ Автовход настроен!');
     })();
 </script>
 
 </body>
-</html>
+            </html>
