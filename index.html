@@ -68,6 +68,8 @@
         .chat-header .right .settings-btn:hover{background:var(--bg-input);color:var(--text-primary)}
         .chat-header .right .fullscreen-btn{background:var(--bg-card);color:var(--text-secondary);font-size:16px;padding:6px 10px}
         .chat-header .right .fullscreen-btn:hover{background:var(--bg-input);color:var(--text-primary)}
+        .chat-header .right .admin-btn{background:rgba(255,215,0,.1);color:#ffd93d;border:1px solid rgba(255,215,0,.15);font-weight:700}
+        .chat-header .right .admin-btn:hover{background:rgba(255,215,0,.2);border-color:rgba(255,215,0,.3)}
         .search-bar{padding:10px 16px 14px;flex-shrink:0;background:var(--bg-secondary)}
         .search-bar input{width:100%;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;font-family:var(--font-family);font-weight:var(--font-weight)}
         .search-bar input:focus{border-color:var(--gradient-start)}
@@ -159,7 +161,6 @@
         .chat-window .win-input button:active:not(:disabled){transform:scale(.96)}
         .chat-window .win-input button:disabled{opacity:.3;cursor:not-allowed;transform:none}
         
-        /* Стикер-панель */
         .sticker-panel{display:none;padding:12px 16px;background:var(--bg-secondary);border-top:1px solid var(--border-color);flex-wrap:wrap;gap:8px;max-height:200px;overflow-y:auto}
         .sticker-panel.show{display:flex}
         .sticker-panel .sticker{font-size:36px;cursor:pointer;padding:6px;border-radius:12px;transition:all .2s;background:var(--bg-card);border:1px solid transparent}
@@ -207,7 +208,6 @@
         .settings-modal .settings-box .settings-close{width:100%;padding:12px;border:none;border-radius:60px;background:var(--bg-card);color:var(--text-secondary);font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;font-family:var(--font-family);margin-top:8px}
         .settings-modal .settings-box .settings-close:hover{background:var(--bg-input);color:var(--text-primary)}
         
-        /* Переключатель темы */
         .theme-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-card);border-radius:60px;border:1px solid var(--border-color);cursor:pointer;transition:all .3s}
         .theme-toggle:hover{background:var(--bg-input)}
         .theme-toggle .toggle-track{width:44px;height:24px;background:var(--text-secondary);border-radius:40px;position:relative;transition:all .3s}
@@ -259,7 +259,6 @@
         .create-group-modal .modal-box .btn-group .btn-cancel{background:var(--bg-card);color:var(--text-secondary)}
         .create-group-modal .modal-box .btn-group .btn-cancel:hover{background:var(--bg-input);color:var(--text-primary)}
         
-        /* Редактирование сообщения */
         .edit-input{display:none;padding:10px 16px;background:var(--bg-secondary);border-top:1px solid var(--border-color);gap:10px;align-items:center}
         .edit-input.show{display:flex}
         .edit-input input{flex:1;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;font-family:var(--font-family);font-weight:var(--font-weight)}
@@ -324,6 +323,7 @@
                 <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
                 <button class="settings-btn" id="settingsBtn">⚙️</button>
                 <button id="profileBtn">👤</button>
+                <button class="admin-btn" id="adminBtn" style="display:none;">🛡️ Admin</button>
                 <button class="logout-btn" id="logoutBtn">Выйти</button>
             </div>
         </div>
@@ -527,6 +527,7 @@
         const WELCOME_MSG = 'Добро пожаловать в QwerSAChat! Этому Боту писать нельзя';
         const SETTINGS_KEY = 'qwersachat_settings';
         const THEME_KEY = 'qwersachat_theme';
+        const ADMIN_EMAILS = ['ilisascrass@gmail.com'];
         
         const STICKERS = ['😊','😂','🥰','😍','🤣','😎','🤗','😱','🤔','🙄','😤','🤬','🥳','🎉','🔥','💀','👀','💪','🤝','❤️','💔','✨','⭐','🌈','🎯'];
 
@@ -606,6 +607,10 @@
         function isVerified(user) {
             if (!user || user.isBot) return false;
             return VERIFIED_USERS.includes(user.displayName);
+        }
+
+        function isAdminUser(email) {
+            return ADMIN_EMAILS.includes(email);
         }
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
@@ -700,6 +705,7 @@
         const profileBtn = document.getElementById('profileBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const adminBtn = document.getElementById('adminBtn');
 
         const settings = loadSettings();
         applySettings(settings);
@@ -1275,6 +1281,14 @@
                 const userData = doc.data();
                 currentUser = { id: userData.id, displayName: userData.displayName, username: userData.username, email: userData.email, avatar: userData.avatar || '👤' };
                 if (userData.avatarData) currentUser.avatarData = userData.avatarData;
+                
+                // Показываем админ-кнопку если это админ
+                if (isAdminUser(email)) {
+                    adminBtn.style.display = 'inline-block';
+                } else {
+                    adminBtn.style.display = 'none';
+                }
+                
                 showStatus(loginStatus, '✅ Вход выполнен!');
                 enterApp();
             } catch (e) { showStatus(loginStatus, '❌ ' + e.message, true); }
@@ -1413,7 +1427,6 @@
 
             chatList.innerHTML = html;
 
-            // Удаление чата
             document.querySelectorAll('.delete-chat-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1422,7 +1435,6 @@
                 });
             });
 
-            // Свайп для удаления (мобильные)
             let startX = 0;
             document.querySelectorAll('.chat-item').forEach(el => {
                 el.addEventListener('touchstart', function(e) {
@@ -1601,7 +1613,6 @@
             winMessages.innerHTML = html;
             winMessages.scrollTop = winMessages.scrollHeight;
             
-            // Удаление сообщения
             document.querySelectorAll('.delete-msg').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1618,7 +1629,6 @@
                 });
             });
             
-            // Редактирование сообщения
             document.querySelectorAll('.edit-msg').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1631,7 +1641,6 @@
                 });
             });
             
-            // Долгий тап для редактирования (мобильные)
             let longPressTimerMsg = null;
             document.querySelectorAll('.msg.outgoing').forEach(el => {
                 el.addEventListener('touchstart', function(e) {
@@ -1751,6 +1760,7 @@
             createGroupModal.classList.remove('open');
             stickerPanel.classList.remove('show');
             cancelEdit();
+            adminBtn.style.display = 'none';
             loginForm.classList.add('active');
             registerForm.classList.remove('active');
             loginStatus.textContent = '';
@@ -1886,6 +1896,10 @@
         logoutBtn.addEventListener('click', logout);
         profileBtn.addEventListener('click', () => openProfile(currentUser));
 
+        adminBtn.addEventListener('click', () => {
+            window.location.href = 'admin.html';
+        });
+
         fullscreenBtn.addEventListener('click', toggleFullscreen);
 
         themeToggle.addEventListener('click', toggleTheme);
@@ -1915,7 +1929,6 @@
             stickerPanel.classList.toggle('show');
         });
 
-        // Редактирование
         editCancel.addEventListener('click', cancelEdit);
         editSave.addEventListener('click', saveEdit);
         editMsgInput.addEventListener('keydown', (e) => {
@@ -1976,7 +1989,7 @@
         document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
 
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat с галочкой в профиле!');
+        console.log('🚀 QwerSAChat с админ-кнопкой!');
         
         const firebaseInit = initFirebase();
 
@@ -2000,6 +2013,11 @@
                             if (userData.lastSeen) {
                                 onlineUsers[currentUser.id] = { lastSeen: userData.lastSeen };
                             }
+                            
+                            if (isAdminUser(userData.email)) {
+                                adminBtn.style.display = 'inline-block';
+                            }
+                            
                             await enterApp();
                             console.log('✅ Автовход для:', currentUser.displayName);
                         }
@@ -2024,4 +2042,4 @@
 </script>
 
 </body>
-        </html>
+    </html>
