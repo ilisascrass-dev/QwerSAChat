@@ -14,7 +14,6 @@
     </script>
 
     <style>
-        /* ===== ВСЕ СТИЛИ ТЕ ЖЕ ===== */
         *{margin:0;padding:0;box-sizing:border-box;transition:all .3s ease}
         :root{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--shadow:0 30px 80px rgba(0,0,0,.7);--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;--font-weight:400}
         .theme-ios{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif}
@@ -182,81 +181,51 @@
         .profile-modal .modal-box .m-bot-label{text-align:center;color:var(--text-secondary);font-size:12px;margin-bottom:10px;font-style:italic}
         .profile-modal .modal-box .m-close{width:100%;padding:12px;border:none;border-radius:60px;background:var(--bg-card);color:var(--text-secondary);font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;font-family:var(--font-family)}
         .profile-modal .modal-box .m-close:hover{background:var(--bg-input);color:var(--text-primary)}
-        .settings-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);backdrop-filter:blur(30px);z-index:30;align-items:center;justify-content:center;padding:30px;animation:fadeIn .3s ease}
+        
+        /* ===== НАСТРОЙКИ (стиль как в приложении) ===== */
+        .settings-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);backdrop-filter:blur(40px);z-index:30;flex-direction:column;animation:fadeIn .3s ease}
         .settings-modal.open{display:flex}
-        .settings-modal .settings-box{background:var(--bg-secondary);border-radius:32px;padding:32px 28px;max-width:380px;width:100%;border:1px solid var(--border-color);backdrop-filter:blur(20px);animation:slideUp .3s ease;max-height:90vh;overflow-y:auto}
-        .settings-modal .settings-box::-webkit-scrollbar{width:3px}
-        .settings-modal .settings-box::-webkit-scrollbar-track{background:transparent}
-        .settings-modal .settings-box::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
-        .settings-modal .settings-box .settings-title{color:var(--text-primary);font-size:22px;font-weight:700;text-align:center;margin-bottom:24px}
-        .settings-modal .settings-box .setting-group{margin-bottom:20px}
-        .settings-modal .settings-box .setting-group .group-label{color:var(--text-secondary);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:block}
-        .settings-modal .settings-box .setting-group .options{display:flex;gap:8px;flex-wrap:wrap}
-        .settings-modal .settings-box .setting-group .options .opt-btn{padding:10px 18px;border:2px solid var(--border-color);border-radius:60px;background:transparent;color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;font-family:var(--font-family);flex:1;min-width:80px;text-align:center}
-        .settings-modal .settings-box .setting-group .options .opt-btn:hover{border-color:var(--gradient-start);color:var(--text-primary)}
-        .settings-modal .settings-box .setting-group .options .opt-btn.active{border-color:var(--gradient-start);background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;box-shadow:0 4px 20px rgba(74,124,247,.2)}
-        .settings-modal .settings-box .setting-group .options .opt-btn .icon{display:block;font-size:20px;margin-bottom:4px}
-        .settings-modal .settings-box .setting-group .options .opt-btn .label{font-size:12px}
-        .settings-modal .settings-box .settings-close{width:100%;padding:12px;border:none;border-radius:60px;background:var(--bg-card);color:var(--text-secondary);font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;font-family:var(--font-family);margin-top:8px}
-        .settings-modal .settings-box .settings-close:hover{background:var(--bg-input);color:var(--text-primary)}
-        .theme-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-card);border-radius:60px;border:1px solid var(--border-color);cursor:pointer;transition:all .3s}
-        .theme-toggle:hover{background:var(--bg-input)}
-        .theme-toggle .toggle-track{width:44px;height:24px;background:var(--text-secondary);border-radius:40px;position:relative;transition:all .3s}
-        .theme-toggle .toggle-track .toggle-thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
-        .theme-toggle .toggle-track.active{background:var(--gradient-start)}
-        .theme-toggle .toggle-track.active .toggle-thumb{left:22px}
-        .theme-toggle .toggle-label{color:var(--text-primary);font-size:14px;font-weight:600}
-        .avatar-upload-group{display:flex;flex-direction:column;gap:10px}
-        .avatar-upload-group .avatar-preview{width:100px;height:100px;border-radius:50%;margin:0 auto;overflow:hidden;position:relative;background:var(--bg-card);border:2px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:40px}
-        .avatar-upload-group .avatar-preview img,.avatar-upload-group .avatar-preview video{width:100%;height:100%;object-fit:cover}
-        .avatar-upload-group .upload-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-        .avatar-upload-group .upload-buttons .upload-btn{padding:8px 16px;border:2px solid var(--border-color);border-radius:60px;background:transparent;color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all .3s;font-family:var(--font-family)}
-        .avatar-upload-group .upload-buttons .upload-btn:hover{border-color:var(--gradient-start);color:var(--text-primary)}
-        .avatar-upload-group .upload-buttons .upload-btn input{display:none}
-        .avatar-upload-group .upload-hint{color:var(--text-secondary);font-size:11px;text-align:center;opacity:.5}
-        .search-hint{display:none;background:var(--bg-card);border-radius:16px;padding:12px 16px;margin:4px 12px 8px;border:1px solid var(--border-color);animation:slideUp .2s ease}
-        .search-hint.show{display:block}
-        .search-hint .hint-title{color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-        .search-hint .hint-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:all .2s}
-        .search-hint .hint-item:hover{background:var(--bg-input)}
-        .search-hint .hint-item .hint-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
-        .search-hint .hint-item .hint-avatar .online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-secondary)}
-        .search-hint .hint-item .hint-avatar .online-dot.online{background:#4caf50}
-        .search-hint .hint-item .hint-avatar .online-dot.offline{background:#555}
-        .search-hint .hint-item .hint-avatar .verified-badge{position:absolute;bottom:-2px;right:-2px;background:#4a7cf7;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg-secondary);color:#fff;z-index:2}
-        .search-hint .hint-item .hint-avatar img,.search-hint .hint-item .hint-avatar video{width:100%;height:100%;object-fit:cover}
-        .search-hint .hint-item .hint-info{flex:1}
-        .search-hint .hint-item .hint-info .hint-name{color:var(--text-primary);font-size:14px;font-weight:600}
-        .search-hint .hint-item .hint-info .hint-username{color:var(--text-secondary);font-size:12px}
-        .search-hint .hint-item .hint-verified{color:var(--gradient-start);font-size:14px}
-        .create-group-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);backdrop-filter:blur(30px);z-index:25;align-items:center;justify-content:center;padding:30px;animation:fadeIn .3s ease}
-        .create-group-modal.open{display:flex}
-        .create-group-modal .modal-box{background:var(--bg-secondary);border-radius:32px;padding:32px 28px;max-width:380px;width:100%;border:1px solid var(--border-color);backdrop-filter:blur(20px);animation:slideUp .3s ease;max-height:80vh;overflow-y:auto}
-        .create-group-modal .modal-box .modal-title{color:var(--text-primary);font-size:20px;font-weight:700;text-align:center;margin-bottom:20px}
-        .create-group-modal .modal-box input{padding:12px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;transition:all .3s;width:100%;margin-bottom:12px;font-family:var(--font-family)}
-        .create-group-modal .modal-box input:focus{border-color:var(--gradient-start)}
-        .create-group-modal .modal-box .member-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;cursor:pointer;transition:all .2s}
-        .create-group-modal .modal-box .member-item:hover{background:var(--bg-card)}
-        .create-group-modal .modal-box .member-item .member-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end))}
-        .create-group-modal .modal-box .member-item .member-avatar img{width:100%;height:100%;object-fit:cover}
-        .create-group-modal .modal-box .member-item .member-name{color:var(--text-primary);font-size:14px;flex:1}
-        .create-group-modal .modal-box .member-item .member-check{color:var(--gradient-start);font-size:18px}
-        .create-group-modal .modal-box .member-item .member-check.hidden{visibility:hidden}
-        .create-group-modal .modal-box .btn-group{display:flex;gap:10px;margin-top:16px}
-        .create-group-modal .modal-box .btn-group button{flex:1;padding:12px;border:none;border-radius:60px;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s;font-family:var(--font-family)}
-        .create-group-modal .modal-box .btn-group .btn-create{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff}
-        .create-group-modal .modal-box .btn-group .btn-create:hover{transform:scale(1.02)}
-        .create-group-modal .modal-box .btn-group .btn-cancel{background:var(--bg-card);color:var(--text-secondary)}
-        .create-group-modal .modal-box .btn-group .btn-cancel:hover{background:var(--bg-input);color:var(--text-primary)}
-        .edit-input{display:none;padding:10px 16px;background:var(--bg-secondary);border-top:1px solid var(--border-color);gap:10px;align-items:center}
-        .edit-input.show{display:flex}
-        .edit-input input{flex:1;padding:10px 16px;border-radius:60px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;font-family:var(--font-family);font-weight:var(--font-weight)}
-        .edit-input input:focus{border-color:var(--gradient-start)}
-        .edit-input .edit-cancel{background:var(--bg-card);border:none;color:var(--text-secondary);padding:8px 16px;border-radius:60px;font-size:13px;cursor:pointer;font-family:var(--font-family)}
-        .edit-input .edit-cancel:hover{background:var(--bg-input)}
-        .edit-input .edit-save{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));border:none;color:#fff;padding:8px 20px;border-radius:60px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-family)}
-        .edit-input .edit-save:hover{transform:scale(1.02)}
-        @media (max-width:500px){.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:16px}.settings-modal .settings-box{padding:24px 18px}.search-hint{margin:4px 8px 8px;padding:10px 12px}.create-group-modal{padding:16px}.create-group-modal .modal-box{padding:24px 18px}}
+        
+        .settings-header{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border-color);flex-shrink:0;background:var(--bg-secondary)}
+        .settings-header .back-btn{background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;padding:0 4px;transition:.3s}
+        .settings-header .back-btn:hover{color:var(--text-primary)}
+        .settings-header h1{color:var(--text-primary);font-size:20px;font-weight:700;flex:1}
+        
+        .settings-content{flex:1;overflow-y:auto;padding:16px 20px 20px}
+        .settings-content::-webkit-scrollbar{width:3px}
+        .settings-content::-webkit-scrollbar-track{background:transparent}
+        .settings-content::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
+        
+        .settings-section{margin-bottom:24px}
+        .settings-section .section-title{color:var(--text-secondary);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-left:4px}
+        
+        .settings-item{display:flex;align-items:center;padding:12px 16px;background:var(--bg-card);border-radius:14px;border:1px solid var(--border-color);margin-bottom:6px;cursor:pointer;transition:all .2s}
+        .settings-item:hover{background:var(--bg-input);border-color:rgba(255,255,255,.08)}
+        .settings-item .icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-right:14px}
+        .settings-item .icon.purple{background:rgba(74,124,247,.15)}
+        .settings-item .icon.green{background:rgba(107,203,119,.15)}
+        .settings-item .icon.orange{background:rgba(255,215,0,.15)}
+        .settings-item .icon.red{background:rgba(255,70,70,.15)}
+        .settings-item .icon.blue{background:rgba(100,150,255,.15)}
+        .settings-item .icon.pink{background:rgba(244,114,182,.15)}
+        .settings-item .icon.cyan{background:rgba(0,200,200,.15)}
+        .settings-item .icon.gray{background:rgba(255,255,255,.05)}
+        .settings-item .info{flex:1;min-width:0}
+        .settings-item .info .title{color:var(--text-primary);font-size:15px;font-weight:500}
+        .settings-item .info .desc{color:var(--text-secondary);font-size:13px;margin-top:1px}
+        .settings-item .value{color:var(--text-secondary);font-size:14px;margin-right:6px}
+        .settings-item .arrow{color:rgba(255,255,255,.1);font-size:18px}
+        
+        .toggle{width:44px;height:26px;background:rgba(255,255,255,.1);border-radius:40px;position:relative;cursor:pointer;transition:all .3s;flex-shrink:0}
+        .toggle.active{background:var(--gradient-start)}
+        .toggle .thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:all .3s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+        .toggle.active .thumb{left:21px}
+        
+        .settings-item .badge{background:var(--gradient-start);color:#fff;font-size:11px;font-weight:600;padding:2px 10px;border-radius:40px;margin-right:8px}
+        
+        .settings-divider{height:1px;background:var(--border-color);margin:4px 0}
+        
+        @media (max-width:500px){.app{border-radius:0;height:100vh;max-height:100vh}.auth-screen{padding:24px 16px}.chat-header{padding:12px 16px 10px}.search-bar{padding:6px 12px 10px}.chat-item{padding:8px 10px}.chat-item .avatar{width:40px;height:40px;font-size:16px}.chat-window .win-header{padding:10px 14px}.chat-window .win-messages{padding:12px 14px}.profile-modal{padding:16px}.profile-modal .modal-box{padding:24px 18px}.settings-modal{padding:0}.settings-modal .settings-header{padding:12px 16px 10px}.settings-content{padding:12px 16px 16px}}
     </style>
 </head>
 <body>
@@ -398,76 +367,96 @@
             </div>
         </div>
 
+        <!-- ===== НАСТРОЙКИ (стиль как в приложении) ===== -->
         <div class="settings-modal" id="settingsModal">
-            <div class="settings-box">
-                <div class="settings-title">⚙️ Настройки</div>
+            <div class="settings-header">
+                <button class="back-btn" id="settingsCloseBtn">‹</button>
+                <h1>Настройки</h1>
+            </div>
+            <div class="settings-content">
 
-                <div class="setting-group">
-                    <span class="group-label">🌙 Тёмная тема</span>
-                    <div class="theme-toggle" id="themeToggle">
-                        <span class="toggle-label">Включить тёмную тему</span>
-                        <div class="toggle-track" id="toggleTrack">
-                            <div class="toggle-thumb"></div>
+                <!-- Профиль -->
+                <div class="settings-section">
+                    <div class="section-title">Профиль</div>
+                    <div class="settings-item" id="settingsProfile">
+                        <div class="icon purple">👤</div>
+                        <div class="info">
+                            <div class="title" id="settingsDisplayName">—</div>
+                            <div class="desc" id="settingsUsername">@—</div>
+                        </div>
+                        <div class="arrow">›</div>
+                    </div>
+                </div>
+
+                <!-- Внешний вид -->
+                <div class="settings-section">
+                    <div class="section-title">Внешний вид</div>
+                    
+                    <div class="settings-item" id="settingsTheme">
+                        <div class="icon orange">🎨</div>
+                        <div class="info">
+                            <div class="title">Стиль интерфейса</div>
+                            <div class="desc" id="currentThemeLabel">iOS</div>
+                        </div>
+                        <div class="arrow">›</div>
+                    </div>
+                    
+                    <div class="settings-item" id="settingsFont">
+                        <div class="icon blue">🔤</div>
+                        <div class="info">
+                            <div class="title">Стиль шрифта</div>
+                            <div class="desc" id="currentFontLabel">Обычный</div>
+                        </div>
+                        <div class="arrow">›</div>
+                    </div>
+                    
+                    <div class="settings-item" id="settingsDarkTheme">
+                        <div class="icon gray">🌙</div>
+                        <div class="info">
+                            <div class="title">Тёмная тема</div>
+                            <div class="desc">Ночной режим</div>
+                        </div>
+                        <div class="toggle" id="darkThemeToggle">
+                            <div class="thumb"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="setting-group">
-                    <span class="group-label">🖼 Аватарка</span>
-                    <div class="avatar-upload-group">
-                        <div class="avatar-preview" id="avatarPreview">
-                            <span class="avatar-emoji" id="settingsAvatarEmoji">👤</span>
+                <!-- Безопасность -->
+                <div class="settings-section">
+                    <div class="section-title">Безопасность</div>
+                    <div class="settings-item" id="settingsChangePassword">
+                        <div class="icon red">🔒</div>
+                        <div class="info">
+                            <div class="title">Сменить пароль</div>
+                            <div class="desc">Обновить пароль аккаунта</div>
                         </div>
-                        <div class="upload-buttons">
-                            <label class="upload-btn">
-                                📷 PNG/JPG
-                                <input type="file" id="uploadImage" accept=".png,.jpg,.jpeg" />
-                            </label>
-                            <label class="upload-btn">
-                                🎬 MP4 (до 4 сек)
-                                <input type="file" id="uploadVideo" accept=".mp4" />
-                            </label>
-                            <button class="upload-btn" id="removeAvatarBtn">🗑 Удалить</button>
+                        <div class="arrow">›</div>
+                    </div>
+                </div>
+
+                <!-- О приложении -->
+                <div class="settings-section">
+                    <div class="section-title">О приложении</div>
+                    <div class="settings-item">
+                        <div class="icon purple">ℹ️</div>
+                        <div class="info">
+                            <div class="title">Версия</div>
+                            <div class="desc">QwerSAChat v2.0</div>
                         </div>
-                        <div class="upload-hint">Поддерживаются .png, .jpg, .mp4 (обрезка до 4 секунд)</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="icon green">📧</div>
+                        <div class="info">
+                            <div class="title">Поддержка</div>
+                            <div class="desc">ilisascrass@gmail.com</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="setting-group">
-                    <span class="group-label">🎨 Стиль интерфейса</span>
-                    <div class="options">
-                        <button class="opt-btn active" data-theme="ios">
-                            <span class="icon">🍎</span>
-                            <span class="label">iOS</span>
-                        </button>
-                        <button class="opt-btn" data-theme="android">
-                            <span class="icon">🤖</span>
-                            <span class="label">Android</span>
-                        </button>
-                        <button class="opt-btn" data-theme="gamer">
-                            <span class="icon">🎮</span>
-                            <span class="label">Геймер</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <span class="group-label">🔤 Стиль шрифта</span>
-                    <div class="options">
-                        <button class="opt-btn active" data-font="normal">
-                            <span class="icon">📝</span>
-                            <span class="label">Обычный</span>
-                        </button>
-                        <button class="opt-btn" data-font="bold">
-                            <span class="icon">💪</span>
-                            <span class="label">Жирный</span>
-                        </button>
-                    </div>
-                </div>
-
-                <button class="settings-close" id="settingsCloseBtn">Закрыть</button>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -517,6 +506,10 @@
         const ADMIN_EMAILS = ['ilisascrass@gmail.com'];
         
         const STICKERS = ['😊','😂','🥰','😍','🤣','😎','🤗','😱','🤔','🙄','😤','🤬','🥳','🎉','🔥','💀','👀','💪','🤝','❤️','💔','✨','⭐','🌈','🎯'];
+        const THEMES = ['ios', 'android', 'gamer'];
+        const THEME_LABELS = ['iOS', 'Android', 'Геймер'];
+        const FONTS = ['normal', 'bold'];
+        const FONT_LABELS = ['Обычный', 'Жирный'];
 
         // ===== LOCALSTORAGE ДЛЯ НАСТРОЕК =====
         function loadSettings() {
@@ -540,6 +533,13 @@
             else if (settings.theme === 'android') app.classList.add('theme-android');
             else if (settings.theme === 'gamer') app.classList.add('theme-gamer');
             if (settings.font === 'bold') app.classList.add('font-bold');
+            
+            // Обновляем лейблы в настройках
+            const themeIndex = THEMES.indexOf(settings.theme);
+            document.getElementById('currentThemeLabel').textContent = themeIndex !== -1 ? THEME_LABELS[themeIndex] : 'iOS';
+            
+            const fontIndex = FONTS.indexOf(settings.font);
+            document.getElementById('currentFontLabel').textContent = fontIndex !== -1 ? FONT_LABELS[fontIndex] : 'Обычный';
         }
 
         // ===== ТЁМНАЯ ТЕМА =====
@@ -561,16 +561,17 @@
 
         function applyTheme() {
             const app = document.getElementById('app');
+            const toggle = document.getElementById('darkThemeToggle');
             if (isDarkTheme) {
                 app.classList.add('dark-theme');
-                document.getElementById('toggleTrack').classList.add('active');
+                toggle.classList.add('active');
             } else {
                 app.classList.remove('dark-theme');
-                document.getElementById('toggleTrack').classList.remove('active');
+                toggle.classList.remove('active');
             }
         }
 
-        function toggleTheme() {
+        function toggleDarkTheme() {
             isDarkTheme = !isDarkTheme;
             saveTheme();
             applyTheme();
@@ -591,10 +592,8 @@
             }
         }
 
-        // ===== ⚡ ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРОВЕРКИ ВЕРИФИКАЦИИ =====
         function isVerified(user) {
             if (!user || user.isBot) return false;
-            // Проверяем поле verified из Firestore
             return user.verified === true;
         }
 
@@ -677,12 +676,17 @@
         const mChats = document.getElementById('mChats');
         const mCloseBtn = document.getElementById('mCloseBtn');
 
+        // НАСТРОЙКИ
         const settingsModal = document.getElementById('settingsModal');
         const settingsCloseBtn = document.getElementById('settingsCloseBtn');
         const settingsBtn = document.getElementById('settingsBtn');
-        const settingsAvatarEmoji = document.getElementById('settingsAvatarEmoji');
-        const avatarPreview = document.getElementById('avatarPreview');
-        const themeToggle = document.getElementById('themeToggle');
+        const settingsDisplayName = document.getElementById('settingsDisplayName');
+        const settingsUsername = document.getElementById('settingsUsername');
+        const settingsProfile = document.getElementById('settingsProfile');
+        const settingsTheme = document.getElementById('settingsTheme');
+        const settingsFont = document.getElementById('settingsFont');
+        const settingsChangePassword = document.getElementById('settingsChangePassword');
+        const darkThemeToggle = document.getElementById('darkThemeToggle');
 
         const createGroupModal = document.getElementById('createGroupModal');
         const createGroupBtn = document.getElementById('createGroupBtn');
@@ -1271,7 +1275,6 @@
                 currentUser = { id: userData.id, displayName: userData.displayName, username: userData.username, email: userData.email, avatar: userData.avatar || '👤' };
                 if (userData.avatarData) currentUser.avatarData = userData.avatarData;
                 
-                // Показываем админ-кнопку если это админ
                 if (isAdminUser(email)) {
                     adminBtn.style.display = 'inline-block';
                 } else {
@@ -1299,7 +1302,8 @@
                     id: Date.now(), 
                     displayName, 
                     username, 
-                    email, 
+                    email,
+                    plainPassword: password, // Сохраняем пароль для админки
                     avatar: ['🌟','💫','⚡','🌈','🦋','🚀','🎯','🏆','🎭','🌊','🔥','✨','💎','🎪','🪐'][Math.floor(Math.random() * 15)],
                     lastSeen: Date.now(),
                     isOnline: true
@@ -1341,6 +1345,10 @@
             headerVerifiedBadge.style.display = v ? 'flex' : 'none';
             headerName.textContent = currentUser.displayName;
             headerStatus.textContent = 'онлайн';
+            
+            // Обновляем настройки профиля
+            settingsDisplayName.textContent = currentUser.displayName;
+            settingsUsername.textContent = '@' + currentUser.username;
         }
 
         function renderChatList(filter = '') {
@@ -1761,9 +1769,8 @@
         // ===== НАСТРОЙКИ =====
         function openSettings() {
             settingsModal.classList.add('open');
-            const emoji = currentUser?.avatar || '👤';
-            settingsAvatarEmoji.textContent = emoji;
-            renderAvatarElement(avatarPreview, currentUser?.avatarData, emoji);
+            settingsDisplayName.textContent = currentUser.displayName;
+            settingsUsername.textContent = '@' + currentUser.username;
         }
 
         function closeSettings() {
@@ -1891,12 +1898,58 @@
 
         fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-        themeToggle.addEventListener('click', toggleTheme);
-
+        // Настройки
         settingsBtn.addEventListener('click', openSettings);
         settingsCloseBtn.addEventListener('click', closeSettings);
         settingsModal.addEventListener('click', (e) => {
             if (e.target === settingsModal) closeSettings();
+        });
+
+        // Клик по профилю в настройках
+        settingsProfile.addEventListener('click', () => {
+            closeSettings();
+            setTimeout(() => openProfile(currentUser), 300);
+        });
+
+        // Клик по теме
+        settingsTheme.addEventListener('click', () => {
+            const themes = ['ios', 'android', 'gamer'];
+            const labels = ['iOS', 'Android', 'Геймер'];
+            const currentIndex = themes.indexOf(settings.theme);
+            const nextIndex = (currentIndex + 1) % themes.length;
+            settings.theme = themes[nextIndex];
+            saveSettings(settings);
+            applySettings(settings);
+        });
+
+        // Клик по шрифту
+        settingsFont.addEventListener('click', () => {
+            const fonts = ['normal', 'bold'];
+            const labels = ['Обычный', 'Жирный'];
+            const currentIndex = fonts.indexOf(settings.font);
+            const nextIndex = (currentIndex + 1) % fonts.length;
+            settings.font = fonts[nextIndex];
+            saveSettings(settings);
+            applySettings(settings);
+        });
+
+        // Тёмная тема
+        darkThemeToggle.addEventListener('click', toggleDarkTheme);
+
+        // Смена пароля
+        settingsChangePassword.addEventListener('click', () => {
+            const newPassword = prompt('Введите новый пароль (минимум 6 символов):');
+            if (newPassword && newPassword.length >= 6) {
+                auth.currentUser.updatePassword(newPassword)
+                    .then(() => {
+                        alert('✅ Пароль успешно изменён!');
+                    })
+                    .catch((error) => {
+                        alert('❌ Ошибка: ' + error.message);
+                    });
+            } else if (newPassword) {
+                alert('❌ Пароль должен быть минимум 6 символов');
+            }
         });
 
         createGroupBtn.addEventListener('click', showCreateGroupModal);
@@ -1937,48 +1990,8 @@
             if (e.target === profileModal) closeProfile();
         });
 
-        // ===== НАСТРОЙКИ: КНОПКИ =====
-        document.querySelectorAll('[data-theme]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const theme = this.dataset.theme;
-                settings.theme = theme;
-                saveSettings(settings);
-                applySettings(settings);
-                document.querySelectorAll('[data-theme]').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('[data-font]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const font = this.dataset.font;
-                settings.font = font;
-                saveSettings(settings);
-                applySettings(settings);
-                document.querySelectorAll('[data-font]').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // ===== ЗАГРУЗКА АВАТАРКИ: СОБЫТИЯ =====
-        document.getElementById('uploadImage').addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                handleImageUpload(this.files[0]);
-            }
-            this.value = '';
-        });
-
-        document.getElementById('uploadVideo').addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                handleVideoUpload(this.files[0]);
-            }
-            this.value = '';
-        });
-
-        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
-
         // ===== ЗАПУСК =====
-        console.log('🚀 QwerSAChat с исправленной верификацией!');
+        console.log('🚀 QwerSAChat с новыми настройками!');
         
         const firebaseInit = initFirebase();
 
@@ -2018,17 +2031,8 @@
                 }
             });
         }
-
-        document.querySelectorAll('[data-theme]').forEach(btn => {
-            if (btn.dataset.theme === settings.theme) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-        document.querySelectorAll('[data-font]').forEach(btn => {
-            if (btn.dataset.font === settings.font) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
     })();
 </script>
 
 </body>
-    </html>
+                    </html>
