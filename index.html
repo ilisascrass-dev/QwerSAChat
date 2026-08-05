@@ -14,7 +14,6 @@
     </script>
 
     <style>
-        /* ===== ВСЕ ТВОИ СТИЛИ (ОРИГИНАЛ) ===== */
         *{margin:0;padding:0;box-sizing:border-box;transition:all .3s ease}
         :root{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--shadow:0 30px 80px rgba(0,0,0,.7);--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;--font-weight:400}
         .theme-ios{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif}
@@ -478,22 +477,123 @@
 </div>
 
 <script>
-    // ===== ТВОЙ ОСНОВНОЙ КОД (ВСЁ КАК БЫЛО) =====
-    // Весь твой код с чатами, группами, стикерами, Firebase и т.д.
-    // Просто вставь сюда всё, что у тебя было в index.html до этого момента
+    // ===== FIREBASE КОНФИГ =====
+    const firebaseConfig = {
+        apiKey: "AIzaSyCqA6dtnpAKKBgBBh5Wcx5eDdOaCsizGE0",
+        authDomain: "qwersachat.firebaseapp.com",
+        projectId: "qwersachat",
+        storageBucket: "qwersachat.firebasestorage.app",
+        messagingSenderId: "216724212476",
+        appId: "1:216724212476:web:a2c1b2f5962124b9a5e579",
+        measurementId: "G-XCZFG4BDTD"
+    };
 
-    // ===== АВТОВХОД (ПРОСТАЯ СТРОЧКА) =====
-    // Проверяем и переключаем интерфейс
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    console.log('🔥 QwerSAChat запущен!');
+
+    // ===== ВХОД =====
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                document.getElementById('loginStatus').textContent = '✅ Вход выполнен!';
+                document.getElementById('loginStatus').style.color = '#6bcb77';
+                setTimeout(() => location.reload(), 1000);
+            })
+            .catch(err => {
+                document.getElementById('loginStatus').textContent = '❌ ' + err.message;
+                document.getElementById('loginStatus').style.color = '#ff6b6b';
+            });
+    });
+
+    // ===== РЕГИСТРАЦИЯ =====
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        const displayName = document.getElementById('regDisplayName').value;
+        const username = document.getElementById('regUsername').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+
+        if (!displayName || !username || !email || !password) {
+            document.getElementById('regStatus').textContent = '❌ Заполните все поля';
+            document.getElementById('regStatus').style.color = '#ff6b6b';
+            return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(cred => {
+                return db.collection('users').doc(cred.user.uid).set({
+                    id: Date.now(),
+                    displayName: displayName,
+                    username: username,
+                    email: email,
+                    avatar: '👤',
+                    verified: false
+                });
+            })
+            .then(() => {
+                document.getElementById('regStatus').textContent = '✅ Аккаунт создан! Войдите.';
+                document.getElementById('regStatus').style.color = '#6bcb77';
+                document.getElementById('registerForm').classList.remove('active');
+                document.getElementById('loginForm').classList.add('active');
+            })
+            .catch(err => {
+                document.getElementById('regStatus').textContent = '❌ ' + err.message;
+                document.getElementById('regStatus').style.color = '#ff6b6b';
+            });
+    });
+
+    // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+    document.getElementById('showRegister').addEventListener('click', function() {
+        document.getElementById('loginForm').classList.remove('active');
+        document.getElementById('registerForm').classList.add('active');
+        document.getElementById('loginStatus').textContent = '';
+        document.getElementById('regStatus').textContent = '';
+    });
+
+    document.getElementById('showLogin').addEventListener('click', function() {
+        document.getElementById('registerForm').classList.remove('active');
+        document.getElementById('loginForm').classList.add('active');
+        document.getElementById('loginStatus').textContent = '';
+        document.getElementById('regStatus').textContent = '';
+    });
+
+    // ===== ВЫХОД =====
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        auth.signOut().then(() => location.reload());
+    });
+
+    // ===== ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ЭКРАНАМИ =====
+    auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainApp').classList.add('active');
+            
+            // Загружаем данные пользователя
+            db.collection('users').doc(user.uid).get().then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('headerName').textContent = data.displayName;
+                    document.getElementById('headerAvatarEmoji').textContent = data.avatar || '👤';
+                    
+                    if (data.email === 'ilisascrass@gmail.com') {
+                        document.getElementById('adminBtn').style.display = 'inline-block';
+                    }
+                }
+            });
         } else {
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('mainApp').classList.remove('active');
+            document.getElementById('adminBtn').style.display = 'none';
         }
     });
+
+    console.log('🚀 QwerSAChat готов!');
 </script>
 
 </body>
-</html>
+                                                    </html>
