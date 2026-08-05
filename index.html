@@ -477,1116 +477,125 @@
 </div>
 
 <script>
-    (function() {
-        // ===== FIREBASE КОНФИГ =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyCqA6dtnpAKKBgBBh5Wcx5eDdOaCsizGE0",
-            authDomain: "qwersachat.firebaseapp.com",
-            projectId: "qwersachat",
-            storageBucket: "qwersachat.firebasestorage.app",
-            messagingSenderId: "216724212476",
-            appId: "1:216724212476:web:a2c1b2f5962124b9a5e579",
-            measurementId: "G-XCZFG4BDTD"
-        };
+    // ===== FIREBASE КОНФИГ =====
+    const firebaseConfig = {
+        apiKey: "AIzaSyCqA6dtnpAKKBgBBh5Wcx5eDdOaCsizGE0",
+        authDomain: "qwersachat.firebaseapp.com",
+        projectId: "qwersachat",
+        storageBucket: "qwersachat.firebasestorage.app",
+        messagingSenderId: "216724212476",
+        appId: "1:216724212476:web:a2c1b2f5962124b9a5e579",
+        measurementId: "G-XCZFG4BDTD"
+    };
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        let db = null;
-        let auth = null;
-        let isFirebaseReady = false;
+    // ===== ИНИЦИАЛИЗАЦИЯ =====
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-        function initFirebase() {
-            try {
-                if (firebase.apps.length === 0) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                db = firebase.firestore();
-                auth = firebase.auth();
-                isFirebaseReady = true;
-                db.enablePersistence().catch(() => {});
-                document.getElementById('firebaseStatus').textContent = '☁️ Облако подключено';
-                console.log('🔥 Firebase готов!');
-                return true;
-            } catch (e) {
-                console.error('❌ Ошибка:', e);
-                document.getElementById('firebaseStatus').textContent = '❌ Ошибка подключения';
-                return false;
-            }
-        }
+    console.log('🔥 Firebase запущен!');
 
-        // ===== КОНСТАНТЫ =====
-        const BOT_ID = 0;
-        const BOT_NAME = 'QwerSABot';
-        const BOT_USERNAME = 'qwersa_bot';
-        const BOT_AVATAR = '🤖';
-        const WELCOME_MSG = 'Добро пожаловать в QwerSAChat! Этому Боту писать нельзя';
-        const SETTINGS_KEY = 'qwersachat_settings';
-        const THEME_KEY = 'qwersachat_theme';
-        const ADMIN_EMAILS = ['ilisascrass@gmail.com'];
-        const STICKERS = ['😊','😂','🥰','😍','🤣','😎','🤗','😱','🤔','🙄','😤','🤬','🥳','🎉','🔥','💀','👀','💪','🤝','❤️','💔','✨','⭐','🌈','🎯'];
-        const THEMES = ['ios', 'android', 'gamer'];
-        const THEME_LABELS = ['iOS', 'Android', 'Геймер'];
-        const FONTS = ['normal', 'bold'];
-        const FONT_LABELS = ['Обычный', 'Жирный'];
-
-        // ===== LOCALSTORAGE =====
-        function loadSettings() {
-            try { const saved = localStorage.getItem(SETTINGS_KEY); if (saved) return JSON.parse(saved); } catch(e) {}
-            return { theme: 'ios', font: 'normal' };
-        }
-        function saveSettings(s) { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch(e) {} }
-        function applySettings(s) {
-            const app = document.getElementById('app');
-            app.classList.remove('theme-ios', 'theme-android', 'theme-gamer', 'font-bold');
-            if (s.theme === 'ios') app.classList.add('theme-ios');
-            else if (s.theme === 'android') app.classList.add('theme-android');
-            else if (s.theme === 'gamer') app.classList.add('theme-gamer');
-            if (s.font === 'bold') app.classList.add('font-bold');
-            document.getElementById('currentThemeLabel').textContent = THEME_LABELS[THEMES.indexOf(s.theme)] || 'iOS';
-            document.getElementById('currentFontLabel').textContent = FONT_LABELS[FONTS.indexOf(s.font)] || 'Обычный';
-        }
-
-        let isDarkTheme = false;
-        function loadTheme() { try { const s = localStorage.getItem(THEME_KEY); if (s) isDarkTheme = JSON.parse(s); } catch(e) {} applyTheme(); }
-        function saveTheme() { try { localStorage.setItem(THEME_KEY, JSON.stringify(isDarkTheme)); } catch(e) {} }
-        function applyTheme() {
-            const app = document.getElementById('app'), toggle = document.getElementById('darkThemeToggle');
-            if (isDarkTheme) { app.classList.add('dark-theme'); toggle.classList.add('active'); } 
-            else { app.classList.remove('dark-theme'); toggle.classList.remove('active'); }
-        }
-        function toggleDarkTheme() { isDarkTheme = !isDarkTheme; saveTheme(); applyTheme(); }
-
-        // ===== ФУНКЦИИ =====
-        function renderAvatarElement(container, data, emoji) {
-            if (data) {
-                if (data.startsWith('data:image') || data.match(/\.(jpg|jpeg|png|gif)/i)) {
-                    container.innerHTML = `<img src="${data}" alt="avatar" />`;
-                } else if (data.startsWith('data:video') || data.match(/\.(mp4|webm)/i)) {
-                    container.innerHTML = `<video src="${data}" autoplay loop muted playsinline></video>`;
-                } else {
-                    container.innerHTML = `<span class="avatar-emoji">${emoji || '👤'}</span>`;
-                }
-            } else {
-                container.innerHTML = `<span class="avatar-emoji">${emoji || '👤'}</span>`;
-            }
-        }
-        function isVerified(user) { return user && !user.isBot && user.verified === true; }
-        function isAdminUser(email) { return ADMIN_EMAILS.includes(email); }
-        function getBot() { return { id: BOT_ID, displayName: BOT_NAME, username: BOT_USERNAME, avatar: BOT_AVATAR, isBot: true }; }
-        function findUserById(id) { if (id === BOT_ID) return getBot(); return allUsers.find(u => u.id === id) || null; }
-        function getTime() { const d = new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
-        function isUserOnline(id) { if (id === currentUser?.id) return true; const s = onlineUsers[id]; return s && (Date.now() - s.lastSeen) < 60000; }
-        function getUserNameById(id) { if (id === BOT_ID) return BOT_NAME; const u = findUserById(id); return u ? u.displayName : 'Неизвестный'; }
-
-        // ===== ПЕРЕМЕННЫЕ =====
-        let currentUser = null;
-        let currentChatPartner = null;
-        let isBotChat = false;
-        let isGroupChat = false;
-        let allUsers = [];
-        let allMessages = [];
-        let allGroups = [];
-        let listeners = [];
-        let searchTimeout = null;
-        let onlineUsers = {};
-        let statusInterval = null;
-        let isFullscreen = false;
-        let editingMsgId = null;
-
-        // ===== DOM =====
+    // ===== ПОСЛЕ ВХОДА (РАБОТАЕТ ВСЕГДА) =====
+    auth.onAuthStateChanged(user => {
         const authScreen = document.getElementById('authScreen');
         const mainApp = document.getElementById('mainApp');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const loginEmail = document.getElementById('loginEmail');
-        const loginPassword = document.getElementById('loginPassword');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginStatus = document.getElementById('loginStatus');
-        const regDisplayName = document.getElementById('regDisplayName');
-        const regUsername = document.getElementById('regUsername');
-        const regEmail = document.getElementById('regEmail');
-        const regPassword = document.getElementById('regPassword');
-        const registerBtn = document.getElementById('registerBtn');
-        const regStatus = document.getElementById('regStatus');
-        const headerAvatar = document.getElementById('headerAvatar');
-        const headerAvatarEmoji = document.getElementById('headerAvatarEmoji');
-        const headerOnlineDot = document.getElementById('headerOnlineDot');
-        const headerVerifiedBadge = document.getElementById('headerVerifiedBadge');
-        const headerName = document.getElementById('headerName');
-        const headerStatus = document.getElementById('headerStatus');
-        const searchInput = document.getElementById('searchInput');
-        const searchHint = document.getElementById('searchHint');
-        const chatList = document.getElementById('chatList');
-        const chatWindow = document.getElementById('chatWindow');
-        const closeChatBtn = document.getElementById('closeChatBtn');
-        const wAvatar = document.getElementById('wAvatar');
-        const wAvatarEmoji = document.getElementById('wAvatarEmoji');
-        const wOnlineDot = document.getElementById('wOnlineDot');
-        const wVerifiedBadge = document.getElementById('wVerifiedBadge');
-        const wName = document.getElementById('wName');
-        const wStatus = document.getElementById('wStatus');
-        const wInfo = document.getElementById('wInfo');
-        const winMessages = document.getElementById('winMessages');
-        const winInput = document.getElementById('winInput');
-        const winSendBtn = document.getElementById('winSendBtn');
-        const stickerBtn = document.getElementById('stickerBtn');
-        const stickerPanel = document.getElementById('stickerPanel');
-        const editInput = document.getElementById('editInput');
-        const editMsgInput = document.getElementById('editMsgInput');
-        const editCancel = document.getElementById('editCancel');
-        const editSave = document.getElementById('editSave');
-        const profileModal = document.getElementById('profileModal');
-        const mAvatar = document.getElementById('mAvatar');
-        const mAvatarEmoji = document.getElementById('mAvatarEmoji');
-        const mOnlineDot = document.getElementById('mOnlineDot');
-        const mVerifiedBadge = document.getElementById('mVerifiedBadge');
-        const mName = document.getElementById('mName');
-        const mUsername = document.getElementById('mUsername');
-        const mId = document.getElementById('mId');
-        const mBotLabel = document.getElementById('mBotLabel');
-        const mMessages = document.getElementById('mMessages');
-        const mChats = document.getElementById('mChats');
-        const mCloseBtn = document.getElementById('mCloseBtn');
-        const settingsModal = document.getElementById('settingsModal');
-        const settingsCloseBtn = document.getElementById('settingsCloseBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsDisplayName = document.getElementById('settingsDisplayName');
-        const settingsUsername = document.getElementById('settingsUsername');
-        const settingsProfile = document.getElementById('settingsProfile');
-        const settingsTheme = document.getElementById('settingsTheme');
-        const settingsFont = document.getElementById('settingsFont');
-        const settingsChangePassword = document.getElementById('settingsChangePassword');
-        const darkThemeToggle = document.getElementById('darkThemeToggle');
-        const createGroupModal = document.getElementById('createGroupModal');
-        const createGroupBtn = document.getElementById('createGroupBtn');
-        const groupNameInput = document.getElementById('groupNameInput');
-        const groupMembersList = document.getElementById('groupMembersList');
-        const createGroupConfirm = document.getElementById('createGroupConfirm');
-        const createGroupCancel = document.getElementById('createGroupCancel');
-        const profileBtn = document.getElementById('profileBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const adminBtn = document.getElementById('adminBtn');
 
-        const settings = loadSettings();
-        applySettings(settings);
-        loadTheme();
-
-        // ===== СТИКЕРЫ =====
-        function renderStickers() {
-            let html = '';
-            STICKERS.forEach(s => { html += `<span class="sticker" data-sticker="${s}">${s}</span>`; });
-            stickerPanel.innerHTML = html;
-            document.querySelectorAll('.sticker').forEach(el => {
-                el.addEventListener('click', function() {
-                    winInput.value += this.dataset.sticker;
-                    stickerPanel.classList.remove('show');
-                    winInput.focus();
-                });
-            });
-        }
-        renderStickers();
-
-        // ===== FULLSCREEN =====
-        function toggleFullscreen() {
-            const app = document.getElementById('app');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (app.requestFullscreen) app.requestFullscreen();
-                else if (app.webkitRequestFullscreen) app.webkitRequestFullscreen();
-                else { app.classList.add('fullscreen'); isFullscreen = true; }
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                else { app.classList.remove('fullscreen'); isFullscreen = false; }
-            }
-        }
-        document.addEventListener('fullscreenchange', function() {
-            const app = document.getElementById('app');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                app.classList.remove('fullscreen'); isFullscreen = false;
-            } else {
-                app.classList.add('fullscreen'); isFullscreen = true;
-            }
-        });
-
-        function showStatus(el, msg, isError = false) {
-            el.textContent = msg;
-            el.style.color = isError ? '#ff6b6b' : 'rgba(255,255,255,0.5)';
-        }
-
-        // ===== FIREBASE: ЗАГРУЗКА =====
-        async function loadUsersFromFirebase() {
-            if (!isFirebaseReady) return;
-            try {
-                const snapshot = await db.collection('users').get();
-                allUsers = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.id !== undefined) allUsers.push(data); });
-                return allUsers;
-            } catch(e) { return []; }
-        }
-        async function loadMessagesFromFirebase() {
-            if (!isFirebaseReady) return;
-            try {
-                const snapshot = await db.collection('messages').orderBy('timestamp', 'asc').get();
-                allMessages = [];
-                snapshot.forEach(doc => { allMessages.push({ id: doc.id, ...doc.data() }); });
-                return allMessages;
-            } catch(e) { return []; }
-        }
-        async function loadGroupsFromFirebase() {
-            if (!isFirebaseReady) return;
-            try {
-                const snapshot = await db.collection('groups').get();
-                allGroups = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.id !== undefined) allGroups.push({ id: doc.id, ...data }); });
-                return allGroups;
-            } catch(e) { return []; }
-        }
-
-        // ===== FIREBASE: СОХРАНЕНИЕ =====
-        async function saveMessageToFirebase(msg) {
-            if (!isFirebaseReady) return;
-            try { const docRef = await db.collection('messages').add(msg); return docRef.id; } catch(e) {}
-        }
-        async function updateMessageInFirebase(id, data) {
-            if (!isFirebaseReady) return;
-            try { await db.collection('messages').doc(id).update(data); } catch(e) {}
-        }
-        async function deleteMessageFromFirebase(id) {
-            if (!isFirebaseReady) return;
-            try { await db.collection('messages').doc(id).delete(); } catch(e) {}
-        }
-        async function saveGroupToFirebase(group) {
-            if (!isFirebaseReady) return;
-            try { const docRef = await db.collection('groups').add(group); return docRef.id; } catch(e) {}
-        }
-
-        // ===== FIREBASE: ПОДПИСКИ =====
-        function subscribeToUsers() {
-            if (!isFirebaseReady) return;
-            if (listeners.users) listeners.users();
-            listeners.users = db.collection('users').onSnapshot((snapshot) => {
-                allUsers = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.id !== undefined) allUsers.push(data); });
-                if (currentUser) { renderChatList(searchInput.value); updateSearchHint(searchInput.value); }
-            });
-        }
-        function subscribeToMessages() {
-            if (!isFirebaseReady) return;
-            if (listeners.messages) listeners.messages();
-            listeners.messages = db.collection('messages').orderBy('timestamp', 'asc').onSnapshot((snapshot) => {
-                allMessages = [];
-                snapshot.forEach(doc => { allMessages.push({ id: doc.id, ...doc.data() }); });
-                if (currentUser) { if (currentChatPartner) renderMessages(); renderChatList(searchInput.value); }
-            });
-        }
-        function subscribeToGroups() {
-            if (!isFirebaseReady) return;
-            if (listeners.groups) listeners.groups();
-            listeners.groups = db.collection('groups').onSnapshot((snapshot) => {
-                allGroups = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.id !== undefined) allGroups.push({ id: doc.id, ...data }); });
-                if (currentUser) renderChatList(searchInput.value);
-            });
-        }
-
-        // ===== ОНЛАЙН СТАТУС =====
-        function updateOnlineStatus() {
-            if (!currentUser || !isFirebaseReady) return;
-            db.collection('users').where('id', '==', currentUser.id).get().then(snapshot => {
-                snapshot.forEach(doc => { doc.ref.update({ lastSeen: Date.now(), isOnline: true }); });
-            }).catch(() => {});
-            onlineUsers[currentUser.id] = { lastSeen: Date.now() };
-        }
-        function loadOnlineStatuses() {
-            if (!isFirebaseReady) return;
-            if (listeners.status) listeners.status();
-            listeners.status = db.collection('users').onSnapshot((snapshot) => {
-                snapshot.forEach(doc => { const data = doc.data(); if (data.id !== undefined && data.lastSeen) { onlineUsers[data.id] = { lastSeen: data.lastSeen }; } });
-                if (currentUser) { renderChatList(searchInput.value); updateChatHeaderStatus(); }
-            });
-        }
-        function updateChatHeaderStatus() {
-            if (!currentChatPartner) return;
-            const isOnline = isUserOnline(currentChatPartner.id);
-            const dot = document.querySelector('.w-avatar .online-dot');
-            if (dot) dot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
-            wStatus.textContent = isOnline ? 'онлайн' : 'был недавно';
-        }
-
-        // ===== MESSAGES =====
-        function getChatMessages(id) {
-            return allMessages.filter(m => (m.fromId === currentUser.id && m.toId === id) || (m.fromId === id && m.toId === currentUser.id) || (m.chatId === id));
-        }
-        function getLastMessage(id) { const msgs = getChatMessages(id); return msgs.length > 0 ? msgs[msgs.length - 1] : null; }
-        function getUnreadCount(id) { return allMessages.filter(m => m.toId === currentUser.id && m.fromId === id && !m.read).length; }
-        function markAsRead(id) {
-            allMessages.forEach(m => {
-                if (m.toId === currentUser.id && m.fromId === id && !m.read) {
-                    m.read = true;
-                    if (m.id) db.collection('messages').doc(m.id).update({ read: true }).catch(() => {});
-                }
-            });
-        }
-        function getChatUsers() {
-            const ids = new Set();
-            allMessages.forEach(m => {
-                if (m.fromId === currentUser.id) ids.add(m.toId);
-                if (m.toId === currentUser.id) ids.add(m.fromId);
-            });
-            allGroups.forEach(g => { if (g.members && g.members.includes(currentUser.id)) ids.add(g.id); });
-            const result = [];
-            ids.forEach(id => {
-                const user = findUserById(id);
-                if (user && user.id !== currentUser.id) result.push(user);
-                const group = allGroups.find(g => g.id === id);
-                if (group) result.push({ id: group.id, displayName: group.name, username: 'group', avatar: '👥', isGroup: true, members: group.members || [] });
-            });
-            return result;
-        }
-        function getMessageCount(id) { return getChatMessages(id).length; }
-        function getChatCount(id) {
-            const ids = new Set();
-            allMessages.forEach(m => { if (m.fromId === id) ids.add(m.toId); if (m.toId === id) ids.add(m.fromId); });
-            return ids.size;
-        }
-
-        // ===== БОТ =====
-        async function sendBotWelcome() {
-            const hasWelcome = allMessages.some(m => m.fromId === BOT_ID && m.toId === currentUser.id && m.isBot);
-            if (hasWelcome) return;
-            const msg = { fromId: BOT_ID, toId: currentUser.id, text: WELCOME_MSG, time: getTime(), timestamp: Date.now(), read: false, isBot: true };
-            allMessages.push(msg);
-            await saveMessageToFirebase(msg);
-        }
-
-        // ===== ПОИСК =====
-        function updateSearchHint(query) {
-            const trimmed = query.trim().toLowerCase();
-            if (!trimmed || trimmed.length < 1) { searchHint.classList.remove('show'); searchHint.innerHTML = ''; return; }
-            const results = allUsers.filter(u => u.id !== currentUser.id && (u.username.toLowerCase().includes(trimmed) || u.displayName.toLowerCase().includes(trimmed))).slice(0, 5);
-            const exactMatch = allUsers.find(u => u.id !== currentUser.id && u.username.toLowerCase() === trimmed);
-            if (exactMatch) { searchHint.classList.remove('show'); searchHint.innerHTML = ''; openChatWithUser(exactMatch); searchInput.value = ''; return; }
-            if (results.length === 0) { searchHint.classList.remove('show'); searchHint.innerHTML = ''; return; }
-            let html = `<div class="hint-title">👥 Найдено: ${results.length}</div>`;
-            results.forEach(user => {
-                const verified = isVerified(user), isOnline = isUserOnline(user.id), avatarData = user.avatarData || null, emoji = user.avatar || '👤';
-                const temp = document.createElement('div'); renderAvatarElement(temp, avatarData, emoji);
-                html += `
-                    <div class="hint-item" data-id="${user.id}">
-                        <div class="hint-avatar" style="position:relative;">${temp.innerHTML}<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>${verified ? '<span class="verified-badge">✓</span>' : ''}</div>
-                        <div class="hint-info"><div class="hint-name">${user.displayName}</div><div class="hint-username">@${user.username}</div></div>
-                    </div>
-                `;
-            });
-            searchHint.innerHTML = html;
-            searchHint.classList.add('show');
-            document.querySelectorAll('.hint-item').forEach(el => {
-                el.addEventListener('click', function() {
-                    const user = findUserById(parseInt(this.dataset.id));
-                    if (user) { openChatWithUser(user); searchInput.value = ''; searchHint.classList.remove('show'); }
-                });
-            });
-        }
-        function openChatWithUser(user) {
-            if (!user || user.id === currentUser.id) return;
-            const hasChat = allMessages.some(m => (m.fromId === currentUser.id && m.toId === user.id) || (m.fromId === user.id && m.toId === currentUser.id));
-            if (!hasChat && !user.isBot) {
-                const sysMsg = { fromId: currentUser.id, toId: user.id, text: '👋 Начинаем общение!', time: getTime(), timestamp: Date.now(), read: true, isSystem: true };
-                allMessages.push(sysMsg);
-                saveMessageToFirebase(sysMsg);
-            }
-            openChat(user);
-        }
-
-        // ===== ГРУППЫ =====
-        function showCreateGroupModal() {
-            createGroupModal.classList.add('open');
-            groupNameInput.value = '';
-            const selectedMembers = [];
-            let html = '';
-            allUsers.forEach(user => {
-                if (user.id === currentUser.id) return;
-                const emoji = user.avatar || '👤';
-                const verified = isVerified(user);
-                html += `
-                    <div class="member-item" data-id="${user.id}">
-                        <div class="member-avatar"><span>${emoji}</span></div>
-                        <div class="member-name">${user.displayName}${verified ? ' ✓' : ''}</div>
-                        <span class="member-check">✓</span>
-                    </div>
-                `;
-            });
-            groupMembersList.innerHTML = html;
-
-            document.querySelectorAll('.member-item').forEach(el => {
-                el.addEventListener('click', function() {
-                    const id = parseInt(this.dataset.id);
-                    const check = this.querySelector('.member-check');
-                    if (check.classList.contains('show')) {
-                        check.classList.remove('show');
-                        this.classList.remove('selected');
-                        const idx = selectedMembers.indexOf(id);
-                        if (idx > -1) selectedMembers.splice(idx, 1);
-                    } else {
-                        check.classList.add('show');
-                        this.classList.add('selected');
-                        selectedMembers.push(id);
-                    }
-                });
-            });
-
-            createGroupConfirm.onclick = async function() {
-                const name = groupNameInput.value.trim();
-                if (!name) { alert('❌ Введите название группы'); return; }
-                if (selectedMembers.length < 1) { alert('❌ Выберите хотя бы одного участника'); return; }
-                const group = { id: Date.now(), name: name, creator: currentUser.id, members: [currentUser.id, ...selectedMembers], createdAt: Date.now() };
-                const groupId = await saveGroupToFirebase(group);
-                if (groupId) {
-                    group.id = groupId;
-                    allGroups.push(group);
-                    alert('✅ Группа создана!');
-                    createGroupModal.classList.remove('open');
-                    renderChatList(searchInput.value);
-                }
-            };
-        }
-
-        // ===== УДАЛЕНИЕ ЧАТА =====
-        function deleteChat(id) {
-            if (!confirm('Удалить этот чат?')) return;
-            const toDelete = allMessages.filter(m => (m.fromId === currentUser.id && m.toId === id) || (m.fromId === id && m.toId === currentUser.id) || (m.chatId === id));
-            toDelete.forEach(m => { if (m.id) deleteMessageFromFirebase(m.id); });
-            allMessages = allMessages.filter(m => !((m.fromId === currentUser.id && m.toId === id) || (m.fromId === id && m.toId === currentUser.id) || (m.chatId === id)));
-            if (currentChatPartner && currentChatPartner.id === id) closeChat();
-            renderChatList(searchInput.value);
-        }
-
-        // ===== РЕДАКТИРОВАНИЕ =====
-        function startEditMessage(id, text) {
-            editingMsgId = id;
-            editMsgInput.value = text;
-            editInput.classList.add('show');
-            editMsgInput.focus();
-        }
-        function cancelEdit() {
-            editingMsgId = null;
-            editInput.classList.remove('show');
-            editMsgInput.value = '';
-        }
-        async function saveEdit() {
-            if (!editingMsgId) return;
-            const newText = editMsgInput.value.trim();
-            if (!newText) { cancelEdit(); return; }
-            const msg = allMessages.find(m => m.id === editingMsgId);
-            if (msg && msg.fromId === currentUser.id) {
-                msg.text = newText;
-                msg.edited = true;
-                await updateMessageInFirebase(editingMsgId, { text: newText, edited: true });
-                renderMessages();
-                renderChatList(searchInput.value);
-            }
-            cancelEdit();
-        }
-
-        // ===== АВТОРИЗАЦИЯ =====
-        async function login() {
-            if (!isFirebaseReady || !auth) {
-                if (!initFirebase()) {
-                    showStatus(loginStatus, '❌ Ошибка подключения к Firebase. Обновите страницу.', true);
-                    return;
-                }
-            }
-            const email = loginEmail.value.trim();
-            const password = loginPassword.value.trim();
-            if (!email || !password) {
-                showStatus(loginStatus, '❌ Введите email и пароль', true);
-                return;
-            }
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const uid = userCredential.user.uid;
-                const doc = await db.collection('users').doc(uid).get();
-                if (!doc.exists) {
-                    showStatus(loginStatus, '❌ Пользователь не найден', true);
-                    return;
-                }
-                const userData = doc.data();
-                currentUser = {
-                    id: userData.id,
-                    displayName: userData.displayName,
-                    username: userData.username,
-                    email: userData.email,
-                    avatar: userData.avatar || '👤'
-                };
-                if (userData.avatarData) currentUser.avatarData = userData.avatarData;
-                if (isAdminUser(email)) adminBtn.style.display = 'inline-block';
-                else adminBtn.style.display = 'none';
-                showStatus(loginStatus, '✅ Вход выполнен!');
-                enterApp();
-            } catch(e) {
-                showStatus(loginStatus, '❌ ' + e.message, true);
-            }
-        }
-
-        async function register() {
-            if (!isFirebaseReady || !auth) {
-                if (!initFirebase()) {
-                    showStatus(regStatus, '❌ Ошибка подключения к Firebase. Обновите страницу.', true);
-                    return;
-                }
-            }
-            const displayName = regDisplayName.value.trim();
-            const username = regUsername.value.trim();
-            const email = regEmail.value.trim();
-            const password = regPassword.value;
-            if (!displayName || !username || !email || !password) {
-                showStatus(regStatus, '❌ Заполните все поля', true);
-                return;
-            }
-            if (password.length < 6) {
-                showStatus(regStatus, '❌ Пароль минимум 6 символов', true);
-                return;
-            }
-            try {
-                const usernameCheck = await db.collection('users').where('username', '==', username).get();
-                if (!usernameCheck.empty) {
-                    showStatus(regStatus, '❌ Никнейм занят', true);
-                    return;
-                }
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const uid = userCredential.user.uid;
-                const newUser = {
-                    id: Date.now(),
-                    displayName,
-                    username,
-                    email,
-                    plainPassword: password,
-                    avatar: ['🌟','💫','⚡','🌈','🦋','🚀','🎯','🏆','🎭','🌊','🔥','✨','💎','🎪','🪐'][Math.floor(Math.random() * 15)],
-                    lastSeen: Date.now(),
-                    isOnline: true
-                };
-                await db.collection('users').doc(uid).set(newUser);
-                currentUser = newUser;
-                showStatus(regStatus, '✅ Аккаунт создан!');
-                enterApp();
-            } catch(e) {
-                showStatus(regStatus, '❌ ' + e.message, true);
-            }
-        }
-
-        // ===== ПРИЛОЖЕНИЕ =====
-        async function enterApp() {
+        if (user) {
+            console.log('✅ Пользователь есть:', user.email);
             authScreen.style.display = 'none';
             mainApp.classList.add('active');
-            await loadUsersFromFirebase();
-            await loadMessagesFromFirebase();
-            await loadGroupsFromFirebase();
-            subscribeToUsers();
-            subscribeToMessages();
-            subscribeToGroups();
-            loadOnlineStatuses();
-            await sendBotWelcome();
-            renderHeader();
-            renderChatList();
-            if (statusInterval) clearInterval(statusInterval);
-            statusInterval = setInterval(updateOnlineStatus, 30000);
-            updateOnlineStatus();
-        }
-
-        function renderHeader() {
-            const emoji = currentUser.avatar || '👤';
-            headerAvatarEmoji.textContent = emoji;
-            renderAvatarElement(headerAvatar, currentUser.avatarData, emoji);
-            headerOnlineDot.className = 'online-dot online';
-            const v = isVerified(currentUser);
-            headerVerifiedBadge.style.display = v ? 'flex' : 'none';
-            headerName.textContent = currentUser.displayName;
-            headerStatus.textContent = 'онлайн';
-            settingsDisplayName.textContent = currentUser.displayName;
-            settingsUsername.textContent = '@' + currentUser.username;
-        }
-
-        function renderChatList(filter = '') {
-            let chatUsers = getChatUsers();
-            const bot = getBot();
-            if (!chatUsers.some(u => u.id === BOT_ID)) chatUsers = [bot, ...chatUsers];
-            chatUsers.sort((a, b) => {
-                const ua = getUnreadCount(a.id), ub = getUnreadCount(b.id);
-                if (ua > 0 && ub === 0) return -1;
-                if (ub > 0 && ua === 0) return 1;
-                const lastA = getLastMessage(a.id), lastB = getLastMessage(b.id);
-                return (lastB?.timestamp || 0) - (lastA?.timestamp || 0);
-            });
-            if (filter.trim()) {
-                const f = filter.toLowerCase().trim(), idNum = parseInt(f);
-                chatUsers = chatUsers.filter(u => u.id === idNum || u.displayName.toLowerCase().includes(f) || (u.username && u.username.toLowerCase().includes(f)));
-            }
-            if (chatUsers.length === 0) {
-                chatList.innerHTML = `<div class="empty-state"><span class="icon">💬</span>${filter.trim() ? 'Ничего не найдено' : 'У вас пока нет чатов'}</div>`;
-                return;
-            }
-            let html = '';
-            chatUsers.forEach(user => {
-                const last = getLastMessage(user.id), unread = getUnreadCount(user.id);
-                const isActive = currentChatPartner && currentChatPartner.id === user.id;
-                const isBot = user.id === BOT_ID, isGroup = user.isGroup || false;
-                const verified = !isBot && !isGroup && isVerified(user);
-                const isOnline = !isBot && !isGroup && isUserOnline(user.id);
-                const avatarClass = isBot ? 'bot' : (isGroup ? 'group-avatar' : 'user');
-                const emoji = user.avatar || (isGroup ? '👥' : '👤');
-                const avatarData = user.avatarData || null;
-                const temp = document.createElement('div');
-                renderAvatarElement(temp, avatarData, emoji);
-                html += `
-                    <div class="chat-item ${isActive ? 'active' : ''}" data-id="${user.id}" data-type="${isGroup ? 'group' : 'user'}">
-                        <div class="avatar ${avatarClass}" style="position:relative;">${temp.innerHTML}${!isBot && !isGroup ? `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>` : ''}${verified ? '<span class="verified-badge">✓</span>' : ''}</div>
-                        <div class="info">
-                            <div class="top"><div class="name">${user.displayName}${isBot ? ' 🤖' : ''}${isGroup ? ' 👥' : ''}</div><span class="time">${last ? last.time : ''}</span></div>
-                            <div class="bottom"><span class="last-msg">${last ? last.text : (isBot ? '💬 Напишите что-нибудь' : 'Нет сообщений')}</span>${unread > 0 ? `<span class="unread">${unread}</span>` : ''}${isBot ? '<span class="bot-tag">Бот</span>' : ''}${isGroup ? '<span class="group-tag">Группа</span>' : ''}</div>
-                        </div>
-                        <button class="delete-chat-btn" data-id="${user.id}">🗑 Удалить</button>
-                    </div>
-                `;
-            });
-            chatList.innerHTML = html;
-
-            document.querySelectorAll('.delete-chat-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) { e.stopPropagation(); deleteChat(parseInt(this.dataset.id)); });
-            });
-            let startX = 0;
-            document.querySelectorAll('.chat-item').forEach(el => {
-                el.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; });
-                el.addEventListener('touchmove', function(e) {
-                    const dx = startX - e.touches[0].clientX;
-                    if (dx > 50) this.classList.add('swiped');
-                    else this.classList.remove('swiped');
-                });
-                el.addEventListener('touchend', function() { setTimeout(() => this.classList.remove('swiped'), 2000); });
-            });
-            document.querySelectorAll('.chat-item').forEach(el => {
-                const id = parseInt(el.dataset.id), type = el.dataset.type;
-                el.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-chat-btn')) return;
-                    if (type === 'group') { const group = allGroups.find(g => g.id === id); if (group) openGroupChat(group); }
-                    else { const user = findUserById(id); if (user) openChat(user); }
-                });
-                el.addEventListener('contextmenu', (e) => { e.preventDefault(); const user = findUserById(parseInt(el.dataset.id)); if (user) openProfile(user); });
-            });
-        }
-
-        function openGroupChat(group) {
-            if (!group) return;
-            currentChatPartner = { id: group.id, displayName: group.name, avatar: '👥', isGroup: true, members: group.members };
-            isGroupChat = true; isBotChat = false;
-            chatWindow.classList.add('open');
-            wAvatar.className = 'w-avatar group-avatar';
-            wAvatarEmoji.textContent = '👥';
-            wAvatar.innerHTML = '<span class="avatar-emoji">👥</span>';
-            wName.textContent = group.name;
-            wVerifiedBadge.style.display = 'none';
-            wStatus.textContent = `${group.members.length} участников`;
-            wInfo.onclick = () => openGroupProfile(group);
-            winInput.disabled = false;
-            winInput.placeholder = 'Сообщение в группу...';
-            winSendBtn.disabled = false;
-            renderMessages();
-            winInput.focus();
-            renderChatList(searchInput.value);
-        }
-        function openGroupProfile(group) {
-            if (!group) return;
-            const members = group.members.map(id => findUserById(id)).filter(u => u);
-            alert(`👥 ${group.name}\nУчастников: ${members.length}\n${members.map(u => u.displayName).join(', ')}`);
-        }
-
-        function openChat(user) {
-            if (!user || user.id === currentUser.id) return;
-            currentChatPartner = user;
-            isBotChat = user.id === BOT_ID;
-            isGroupChat = false;
-            markAsRead(user.id);
-            chatWindow.classList.add('open');
-            const isBot = isBotChat, verified = isVerified(user), avatarClass = isBot ? 'bot' : 'user', emoji = user.avatar || '👤';
-            wAvatar.className = `w-avatar ${avatarClass}`;
-            wAvatarEmoji.textContent = emoji;
-            renderAvatarElement(wAvatar, user.avatarData, emoji);
-            const isOnline = !isBot && isUserOnline(user.id);
-            wOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
-            wVerifiedBadge.style.display = verified ? 'flex' : 'none';
-            wAvatar.onclick = () => openProfile(user);
-            wName.textContent = user.displayName;
-            wStatus.textContent = isBot ? '🤖 Бот QwerSAChat' : (isOnline ? 'онлайн' : 'был недавно');
-            wInfo.onclick = () => openProfile(user);
-            winInput.disabled = isBot;
-            winInput.placeholder = isBot ? '🚫 Этому боту писать нельзя' : 'Сообщение...';
-            winSendBtn.disabled = isBot;
-            renderMessages();
-            winInput.focus();
-            renderChatList(searchInput.value);
-        }
-
-        function closeChat() {
-            chatWindow.classList.remove('open');
-            currentChatPartner = null;
-            isBotChat = false;
-            isGroupChat = false;
-            stickerPanel.classList.remove('show');
-            cancelEdit();
-            renderChatList(searchInput.value);
-        }
-
-        function renderMessages() {
-            if (!currentChatPartner) { winMessages.innerHTML = `<div class="sys-msg">💬 Начните общение</div>`; return; }
-            const targetId = currentChatPartner.id;
-            const msgs = allMessages.filter(m => (m.fromId === currentUser.id && m.toId === targetId) || (m.fromId === targetId && m.toId === currentUser.id) || (m.chatId === targetId));
-            if (msgs.length === 0) { winMessages.innerHTML = `<div class="sys-msg">💬 Напишите что-нибудь ${currentChatPartner.displayName}</div>`; return; }
-            let html = '';
-            msgs.forEach(msg => {
-                const out = msg.fromId === currentUser.id, isBot = msg.fromId === BOT_ID;
-                const cls = out ? 'outgoing' : 'incoming', botCls = isBot ? 'bot-msg' : '';
-                const msgId = msg.id || 'temp', isDeleted = msg.deleted === true, isEdited = msg.edited === true;
-                const showAuthor = isGroupChat && !isBot && msg.fromId !== currentUser.id;
-                const authorName = showAuthor ? getUserNameById(msg.fromId) : '';
-                if (isDeleted) {
-                    html += `<div class="msg ${cls} ${botCls}" style="opacity:0.4;font-style:italic;">Сообщение удалено<span class="m-time">${msg.time}</span></div>`;
-                    return;
+            
+            // Подгружаем данные
+            db.collection('users').doc(user.uid).get().then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    window.currentUser = {
+                        id: data.id,
+                        displayName: data.displayName,
+                        username: data.username,
+                        email: data.email,
+                        avatar: data.avatar || '👤'
+                    };
+                    if (data.avatarData) window.currentUser.avatarData = data.avatarData;
+                    
+                    // Обновляем интерфейс
+                    document.getElementById('headerName').textContent = data.displayName;
+                    document.getElementById('headerAvatarEmoji').textContent = data.avatar || '👤';
+                    
+                    // Админ-кнопка
+                    if (data.email === 'ilisascrass@gmail.com') {
+                        document.getElementById('adminBtn').style.display = 'inline-block';
+                    }
                 }
-                html += `
-                    <div class="msg ${cls} ${botCls}" data-msgid="${msgId}">
-                        ${isBot ? '<span class="bot-label">🤖 Бот</span>' : ''}
-                        ${showAuthor ? `<span class="msg-author">${authorName}</span>` : ''}
-                        ${msg.text}
-                        ${isEdited ? `<span class="edited-label">(ред.)</span>` : ''}
-                        <span class="m-time">${msg.time}</span>
-                        <div class="msg-actions">
-                            ${out ? `<button class="edit-msg" title="Редактировать">✏️</button>` : ''}
-                            ${out ? `<button class="delete-msg" title="Удалить">🗑️</button>` : ''}
-                        </div>
-                    </div>
-                `;
             });
-            winMessages.innerHTML = html;
-            winMessages.scrollTop = winMessages.scrollHeight;
-
-            document.querySelectorAll('.delete-msg').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const msgId = this.closest('.msg').dataset.msgid;
-                    if (msgId && confirm('Удалить сообщение?')) {
-                        deleteMessageFromFirebase(msgId);
-                        const msg = allMessages.find(m => m.id === msgId);
-                        if (msg) { msg.deleted = true; renderMessages(); }
-                    }
-                });
-            });
-            document.querySelectorAll('.edit-msg').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const msgId = this.closest('.msg').dataset.msgid;
-                    const msg = allMessages.find(m => m.id === msgId);
-                    if (msg && msg.fromId === currentUser.id) {
-                        startEditMessage(msgId, msg.text);
-                    }
-                });
-            });
-            let longPressTimer = null;
-            document.querySelectorAll('.msg.outgoing').forEach(el => {
-                el.addEventListener('touchstart', function() {
-                    longPressTimer = setTimeout(() => {
-                        const msgId = this.dataset.msgid;
-                        const msg = allMessages.find(m => m.id === msgId);
-                        if (msg && msg.fromId === currentUser.id) {
-                            startEditMessage(msgId, msg.text);
-                        }
-                    }, 800);
-                });
-                el.addEventListener('touchend', () => clearTimeout(longPressTimer));
-                el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
-            });
-        }
-
-        async function sendMessage(text) {
-            if (!currentChatPartner || isBotChat) { if (isBotChat) winInput.value = ''; return; }
-            const targetId = currentChatPartner.id;
-            const msg = { fromId: currentUser.id, toId: targetId, text, time: getTime(), timestamp: Date.now(), read: false };
-            if (isGroupChat) { msg.chatId = targetId; msg.toId = null; }
-            allMessages.push(msg);
-            await saveMessageToFirebase(msg);
-            winInput.value = '';
-            renderMessages();
-            renderChatList(searchInput.value);
-        }
-
-        function handleSearch() {
-            const query = searchInput.value;
-            if (searchTimeout) clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => updateSearchHint(query), 300);
-            renderChatList(query);
-            const idNum = parseInt(query);
-            if (!isNaN(idNum) && idNum > 0) {
-                const user = findUserById(idNum);
-                if (user && user.id !== currentUser.id) { openChatWithUser(user); searchInput.value = ''; searchHint.classList.remove('show'); }
-            }
-        }
-
-        function openProfile(user) {
-            if (!user) return;
-            const isBot = user.id === BOT_ID, verified = isVerified(user), avatarClass = isBot ? 'bot' : 'user';
-            const isOnline = !isBot && isUserOnline(user.id);
-            mAvatar.className = `m-avatar ${avatarClass}`;
-            const emoji = user.avatar || '👤';
-            mAvatarEmoji.textContent = emoji;
-            renderAvatarElement(mAvatar, user.avatarData, emoji);
-            mOnlineDot.className = `online-dot ${isOnline ? 'online' : 'offline'}`;
-            mVerifiedBadge.style.display = verified ? 'flex' : 'none';
-            mName.textContent = user.displayName;
-            mUsername.textContent = isBot ? '🤖 Бот' : '@' + user.username;
-            mId.textContent = 'ID: ' + user.id;
-            if (isBot) {
-                mBotLabel.style.display = 'block';
-                mBotLabel.textContent = '🤖 Бот QwerSAChat — писать нельзя';
-                mMessages.textContent = '—';
-                mChats.textContent = '—';
-            } else {
-                mBotLabel.style.display = 'none';
-                mMessages.textContent = getMessageCount(user.id);
-                mChats.textContent = getChatCount(user.id);
-            }
-            profileModal.classList.add('open');
-        }
-        function closeProfile() { profileModal.classList.remove('open'); }
-
-        async function logout() {
-            if (listeners.users) listeners.users();
-            if (listeners.messages) listeners.messages();
-            if (listeners.groups) listeners.groups();
-            if (listeners.status) listeners.status();
-            if (statusInterval) clearInterval(statusInterval);
-            listeners = {};
-            currentUser = null;
-            currentChatPartner = null;
-            isBotChat = false;
-            isGroupChat = false;
-            await auth.signOut();
+        } else {
+            console.log('👋 Нет пользователя');
             authScreen.style.display = 'flex';
             mainApp.classList.remove('active');
-            chatWindow.classList.remove('open');
-            closeProfile();
-            closeSettings();
-            createGroupModal.classList.remove('open');
-            stickerPanel.classList.remove('show');
-            cancelEdit();
-            adminBtn.style.display = 'none';
-            loginForm.classList.add('active');
-            registerForm.classList.remove('active');
-            loginStatus.textContent = '';
-            regStatus.textContent = '';
-            loginEmail.value = '';
-            loginPassword.value = '';
         }
+    });
 
-        function openSettings() { settingsModal.classList.add('open'); settingsDisplayName.textContent = currentUser.displayName; settingsUsername.textContent = '@' + currentUser.username; }
-        function closeSettings() { settingsModal.classList.remove('open'); }
-
-        // ===== ЗАГРУЗКА АВАТАРКИ =====
-        async function handleImageUpload(file) {
-            if (!file || !file.type.startsWith('image/')) { alert('Загрузите изображение'); return; }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const dataUrl = e.target.result;
-                db.collection('users').where('id', '==', currentUser.id).get().then(snapshot => {
-                    snapshot.forEach(doc => { doc.ref.update({ avatarData: dataUrl }); });
-                });
-                currentUser.avatarData = dataUrl;
-                renderHeader();
-                closeSettings();
-            };
-            reader.readAsDataURL(file);
-        }
-        async function handleVideoUpload(file) {
-            if (!file || !file.type.startsWith('video/')) { alert('Загрузите видео MP4'); return; }
-            try {
-                const trimmedData = await trimVideoTo4Seconds(file);
-                db.collection('users').where('id', '==', currentUser.id).get().then(snapshot => {
-                    snapshot.forEach(doc => { doc.ref.update({ avatarData: trimmedData }); });
-                });
-                currentUser.avatarData = trimmedData;
-                renderHeader();
-                closeSettings();
-            } catch(e) { alert('Ошибка: ' + e.message); }
-        }
-        function handleRemoveAvatar() {
-            db.collection('users').where('id', '==', currentUser.id).get().then(snapshot => {
-                snapshot.forEach(doc => { doc.ref.update({ avatarData: null }); });
+    // ===== ВХОД =====
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                document.getElementById('loginStatus').textContent = '✅ Вход выполнен!';
+                document.getElementById('loginStatus').style.color = '#6bcb77';
+            })
+            .catch(e => {
+                document.getElementById('loginStatus').textContent = '❌ ' + e.message;
+                document.getElementById('loginStatus').style.color = '#ff6b6b';
             });
-            delete currentUser.avatarData;
-            renderHeader();
-            closeSettings();
-        }
-        function trimVideoTo4Seconds(file) {
-            return new Promise((resolve, reject) => {
-                const video = document.createElement('video');
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                video.src = URL.createObjectURL(file);
-                video.muted = true;
-                video.playsInline = true;
-                video.onloadedmetadata = function() {
-                    const duration = Math.min(video.duration, 4);
-                    canvas.width = video.videoWidth || 640;
-                    canvas.height = video.videoHeight || 480;
-                    const stream = canvas.captureStream(30);
-                    const recorder = new MediaRecorder(stream, { mimeType: 'video/mp4' });
-                    const chunks = [];
-                    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-                    recorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: 'video/mp4' });
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(blob);
-                    };
-                    recorder.start();
-                    let startTime = performance.now();
-                    const drawFrame = () => {
-                        const elapsed = (performance.now() - startTime) / 1000;
-                        if (elapsed >= duration || video.ended) { recorder.stop(); return; }
-                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        requestAnimationFrame(drawFrame);
-                    };
-                    video.play().then(drawFrame).catch(reject);
-                };
-                video.onerror = reject;
-                video.load();
+    });
+
+    // ===== РЕГИСТРАЦИЯ =====
+    document.getElementById('registerBtn').addEventListener('click', () => {
+        const displayName = document.getElementById('regDisplayName').value;
+        const username = document.getElementById('regUsername').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(cred => {
+                return db.collection('users').doc(cred.user.uid).set({
+                    id: Date.now(),
+                    displayName: displayName,
+                    username: username,
+                    email: email,
+                    avatar: '👤',
+                    verified: false
+                });
+            })
+            .then(() => {
+                document.getElementById('regStatus').textContent = '✅ Аккаунт создан!';
+                document.getElementById('regStatus').style.color = '#6bcb77';
+            })
+            .catch(e => {
+                document.getElementById('regStatus').textContent = '❌ ' + e.message;
+                document.getElementById('regStatus').style.color = '#ff6b6b';
             });
-        }
+    });
 
-        // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
-        function showLoginForm() { loginForm.classList.add('active'); registerForm.classList.remove('active'); loginStatus.textContent = ''; regStatus.textContent = ''; }
-        function showRegisterForm() { registerForm.classList.add('active'); loginForm.classList.remove('active'); loginStatus.textContent = ''; regStatus.textContent = ''; }
+    // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+    document.getElementById('showRegister').addEventListener('click', () => {
+        document.getElementById('loginForm').classList.remove('active');
+        document.getElementById('registerForm').classList.add('active');
+    });
+    document.getElementById('showLogin').addEventListener('click', () => {
+        document.getElementById('registerForm').classList.remove('active');
+        document.getElementById('loginForm').classList.add('active');
+    });
 
-        // ===== СОБЫТИЯ =====
-        document.getElementById('showRegister').addEventListener('click', showRegisterForm);
-        document.getElementById('showLogin').addEventListener('click', showLoginForm);
-        loginBtn.addEventListener('click', login);
-        loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
-        loginEmail.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginPassword.focus(); });
-        registerBtn.addEventListener('click', register);
-        regPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') register(); });
-        logoutBtn.addEventListener('click', logout);
-        profileBtn.addEventListener('click', () => openProfile(currentUser));
-        adminBtn.addEventListener('click', () => { window.location.href = 'admin.html'; });
-        fullscreenBtn.addEventListener('click', toggleFullscreen);
-        settingsBtn.addEventListener('click', openSettings);
-        settingsCloseBtn.addEventListener('click', closeSettings);
-        settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
-        settingsProfile.addEventListener('click', () => { closeSettings(); setTimeout(() => openProfile(currentUser), 300); });
-        settingsTheme.addEventListener('click', () => {
-            const idx = THEMES.indexOf(settings.theme);
-            const next = (idx + 1) % THEMES.length;
-            settings.theme = THEMES[next];
-            saveSettings(settings);
-            applySettings(settings);
-        });
-        settingsFont.addEventListener('click', () => {
-            const idx = FONTS.indexOf(settings.font);
-            const next = (idx + 1) % FONTS.length;
-            settings.font = FONTS[next];
-            saveSettings(settings);
-            applySettings(settings);
-        });
-        darkThemeToggle.addEventListener('click', toggleDarkTheme);
-        settingsChangePassword.addEventListener('click', () => {
-            const newPass = prompt('Введите новый пароль (мин. 6 символов):');
-            if (newPass && newPass.length >= 6) {
-                auth.currentUser.updatePassword(newPass).then(() => alert('✅ Пароль изменён!')).catch((e) => alert('❌ ' + e.message));
-            } else if (newPass) { alert('❌ Минимум 6 символов'); }
-        });
-        createGroupBtn.addEventListener('click', showCreateGroupModal);
-        createGroupCancel.addEventListener('click', () => createGroupModal.classList.remove('open'));
-        createGroupModal.addEventListener('click', (e) => { if (e.target === createGroupModal) createGroupModal.classList.remove('open'); });
-        closeChatBtn.addEventListener('click', closeChat);
-        winSendBtn.addEventListener('click', () => sendMessage(winInput.value));
-        winInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(winInput.value); }
-        });
-        stickerBtn.addEventListener('click', () => stickerPanel.classList.toggle('show'));
-        editCancel.addEventListener('click', cancelEdit);
-        editSave.addEventListener('click', saveEdit);
-        editMsgInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); saveEdit(); }
-            if (e.key === 'Escape') cancelEdit();
-        });
-        searchInput.addEventListener('input', handleSearch);
-        mCloseBtn.addEventListener('click', closeProfile);
-        profileModal.addEventListener('click', (e) => { if (e.target === profileModal) closeProfile(); });
-
-        // ===== ЗАГРУЗКА АВАТАРКИ =====
-        document.getElementById('uploadImage').addEventListener('change', function(e) {
-            if (this.files && this.files[0]) { handleImageUpload(this.files[0]); }
-            this.value = '';
-        });
-        document.getElementById('uploadVideo').addEventListener('change', function(e) {
-            if (this.files && this.files[0]) { handleVideoUpload(this.files[0]); }
-            this.value = '';
-        });
-        document.getElementById('removeAvatarBtn').addEventListener('click', handleRemoveAvatar);
-
- // ===== ПРОСТОЙ АВТОВХОД =====
-console.log('🔍 Проверка авторизации...');
-
-firebase.auth().onAuthStateChanged(user => {
-    console.log('📌 Статус:', user ? 'Есть' : 'Нет');
-    
-    if (user) {
-        // Пользователь есть — входим
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('mainApp').classList.add('active');
-        console.log('✅ Вход для:', user.email);
-        
-        // Подгружаем данные
-        db.collection('users').doc(user.uid).get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                window.currentUser = {
-                    id: data.id,
-                    displayName: data.displayName,
-                    username: data.username,
-                    email: data.email,
-                    avatar: data.avatar || '👤'
-                };
-                if (data.avatarData) window.currentUser.avatarData = data.avatarData;
-                if (data.lastSeen) window.onlineUsers[data.id] = { lastSeen: data.lastSeen };
-                
-                // Админ-кнопка
-                if (data.email === 'ilisascrass@gmail.com') {
-                    document.getElementById('adminBtn').style.display = 'inline-block';
-                }
-                
-                // Обновляем интерфейс
-                if (typeof renderHeader === 'function') renderHeader();
-                if (typeof renderChatList === 'function') renderChatList();
-                if (typeof loadUsersFromFirebase === 'function') loadUsersFromFirebase();
-                if (typeof loadMessagesFromFirebase === 'function') loadMessagesFromFirebase();
-                if (typeof loadGroupsFromFirebase === 'function') loadGroupsFromFirebase();
-            }
-        });
-    } else {
-        // Пользователя нет — показываем вход
-        document.getElementById('authScreen').style.display = 'flex';
-        document.getElementById('mainApp').classList.remove('active');
-        document.getElementById('chatWindow').classList.remove('open');
-        console.log('👋 Показываем вход');
-    }
-});
-
-// Принудительно проверяем сразу
-setTimeout(() => {
-    if (firebase.auth().currentUser) {
-        console.log('🔄 Форсированный вход');
+    // ===== ВЫХОД =====
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.signOut();
         location.reload();
-    }
-}, 1000);
+    });
+
+    console.log('🚀 QwerSAChat готов!');
 </script>
 
 </body>
-    </html>
+</html>
