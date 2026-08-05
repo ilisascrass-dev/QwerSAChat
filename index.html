@@ -14,7 +14,7 @@
     </script>
 
     <style>
-        /* ===== ВСЕ ТВОИ СТИЛИ (ОСТАВЛЯЕМ КАК БЫЛО) ===== */
+        /* ===== ВСЕ ТВОИ СТИЛИ (ОРИГИНАЛ) ===== */
         *{margin:0;padding:0;box-sizing:border-box;transition:all .3s ease}
         :root{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--shadow:0 30px 80px rgba(0,0,0,.7);--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;--font-weight:400}
         .theme-ios{--bg-primary:#0a0a12;--bg-secondary:rgba(18,22,36,.92);--bg-card:rgba(255,255,255,.04);--bg-input:rgba(255,255,255,.04);--text-primary:#eef4fa;--text-secondary:rgba(255,255,255,.3);--border-color:rgba(255,255,255,.06);--gradient-start:#4a7cf7;--gradient-end:#7c5cfc;--radius:40px;--font-family:-apple-system,'SF Pro Display','Helvetica Neue',system-ui,sans-serif}
@@ -479,23 +479,16 @@
 
 <script>
     // ===== ТВОЙ ОСНОВНОЙ КОД (ВСЁ КАК БЫЛО) =====
-    // (весь твой код с чатами, группами, стикерами и т.д.)
-    // ... ОН ЗДЕСЬ, ПРОСТО ВСТАВЬ ЕГО ОБРАТНО ...
+    // Весь твой код с чатами, группами, стикерами, Firebase и т.д.
+    // Просто вставь сюда всё, что у тебя было в index.html до этого момента
 
-    // ===== АВТОВХОД (ДОБАВЛЯЕМ В КОНЕЦ) =====
-    console.log('🚀 Запуск с автовходом...');
-    
-    // Ждём загрузку Firebase
+    // ===== АВТОВХОД (ПРОСТАЯ СТРОЧКА) =====
+    // Проверяем и переключаем интерфейс
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            console.log('✅ Автовход для:', user.email);
-            // Если мы на экране входа — переключаем
-            if (document.getElementById('authScreen').style.display !== 'none') {
-                document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('mainApp').classList.add('active');
-            }
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').classList.add('active');
         } else {
-            console.log('👋 Пользователь не найден');
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('mainApp').classList.remove('active');
         }
@@ -503,4 +496,4 @@
 </script>
 
 </body>
-            </html>
+</html>
